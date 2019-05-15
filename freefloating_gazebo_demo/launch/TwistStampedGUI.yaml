@@ -1,0 +1,26 @@
+body_velocity_setpoint:
+    type: geometry_msgs/TwistStamped
+    x:
+        min: -5
+        max: 5
+        to: twist.linear.x
+    y:
+        min: -5
+        max: 5
+        to: twist.linear.y
+    z:
+        min: -5
+        max: 5
+        to: twist.linear.z
+    roll:
+        min: -pi/2
+        max: pi/2
+        to: twist.angular.x
+    pitch:
+        min: -pi/2
+        max: pi/2
+        to: twist.angular.y
+    yaw:
+        min: -pi/2
+        max: pi/2
+        to: twist.angular.z

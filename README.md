@@ -38,3 +38,6 @@ However, we can see in the angles plot: after 40s it change rapidly. It satisfie
 
 Check angles change:
 
+![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_angles.png)
+![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_roll.png)
+It is very unusual that after around 40s, the angular has the big errors and I do not know where cause the errors. Since after 5s the robot arrived its desired depth and no change on other direction. So why the robot will go into this situation? And also, we could not confirm that the optimization process is correct due to the angles change is similar to the previous one. That is: after 40s the angles will change rapidly. So I will check if somewhere wrong in implementation leading this fact.

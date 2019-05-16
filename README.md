@@ -7,9 +7,9 @@ The master thesis: Control of an Autunomous Underwater with Vectored Thrusters
 
 The plots are not in this folder and tha main problem now is the roll motion are not following the desired one.
 
-Debug report:
+##Debug report:
 
-Try to find the caurse of errors
+###Try to find the caurse of errors
 
 Linear velocity in x axis(vx) :
 with desired angular velocity in x axis is always 0 and with linear velocity in x axis:
@@ -27,7 +27,7 @@ Since we do not set the desired angular velocity in x axis, the angles are not e
 
 However, I already checked several times the optimization algorithm(QP) and do not find the errors. But may be due to the fact of PID gains of angular velcocity in x axis(roll).
 
-Check the PID gains:
+###Check the PID gains:
 
 1. As we can see in the vx plot(the first picture): the PID gains are good enough so we just focus on the PID gains in roll
 2. PID gains in angular velocity in x axis(roll)
@@ -36,7 +36,7 @@ As we can see in the last picture, before around 25s the roll could have a stabl
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/pure_angles.png)
 However, we can see in the angles plot: after 40s it change rapidly. It satisfies the desired roll motion but we could compare to the non angular motion to test the desired angles change.
 
-Check angles change:
+###Check angles change:
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_angles.png)
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_roll.png)

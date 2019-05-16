@@ -258,8 +258,8 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   alphamin = -3.14/2.0;
   deltalphamax = 5.0/180.0*3.14;
   deltalphamin = -5.0/180.0*3.14;
-//   deltalphamin = -5.0;
-//    deltalphamax = 5.0;
+//  deltalphamin = -5.0;
+//  deltalphamax = 5.0;
 
     vpMatrix W(7,7), A(14,7), Aeq_det(6,6), H(1,7);
   vpColVector f(7), state_initial(7), state(7), tau(6), r(1) ;
@@ -269,15 +269,6 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
   double cost_delta = 0.0;
   delta_state[0] = 10;
-
-  W[5][5] = W[6][6] = 2;
-  W[0][0] = W[1][1] = 1;
-  W[2][2] = W[3][3] = W[4][4] = 1;
-
-  A[0][0] = A[2][1] = A[4][2] = A[6][3] = A[8][4] = 1.0;
-  A[10][5] = A[12][6] = 1.0;
-  A[1][0] = A[3][1] = A[5][2] = A[7][3] = A[9][4] = -1.0;
-  A[11][5] = A[13][6] = -1.0;
 
   tau[0] = cmd.force.x;
   tau[1] = cmd.force.y;
@@ -377,7 +368,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     beq = tau - Aeq_pre * state_pre;
 
     //the bouyancy is compensate by PID control
-    // beq[2] = beq[2] + (25 * 0.01)*9.8;
+     beq[2] = beq[2] + (25 * 0.01)*9.8;
 
     // state is delta f delta alpha
     b[0] = f_max - state_pre[0];
@@ -412,8 +403,6 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
     cost = Aeq * delta_state - beq;
     double cost_sum = cost.transpose() * cost;
-
-
 
     plot_time.push_back(ros::Time::now().toSec());
     plot_cost_x.push_back(cost[0]);
@@ -493,19 +482,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     plt::save("/home/x1ao/master/master_thesis_auv/test01/cost_rsum_rate.png");
   }
 
-
-    // std::cout << "Q is \n" << Aeq << "\n r is \n" << beq << "\n Aeq is \n" << Aeq_new << "\n beq is \n" << beq_new << "\n A is \n" << A << "\n b is \n" << b << std::endl;
-    // std::cout << "cost is " << Aeq * delta_state - beq << std::endl;
-
-
-//
-  // }
-
-// std::cout<<"iter = " << iter << std::endl;
-  // std::cout << "the equation function is \n" << beq - Aeq * state << std::endl;
-
   // update angle
-
     sensor_msgs::JointState joint_msg;
 
 

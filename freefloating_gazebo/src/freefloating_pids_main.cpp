@@ -102,8 +102,8 @@ int main(int argc, char ** argv)
   // to test the body_pid output
   // ros::Publisher body_pid_publisher;
   // std::string default_mode = "position";
-  // std::string default_mode = "velocity";
-  std::string default_mode = "vectored";
+   std::string default_mode = "velocity";
+//  std::string default_mode = "vectored";
 
   std::stringstream ss;
   ss << "Init PID control for " << nh.getNamespace() << ": "; //Returns the namespace associated with this NodeHandle.

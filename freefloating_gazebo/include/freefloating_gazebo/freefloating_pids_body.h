@@ -65,6 +65,8 @@ private:
 
     std::vector<double> plot_effort_fl, plot_effort_fr, plot_angle_l, plot_angle_r, plot_effort_f2, plot_effort_f3, plot_effort_f4;
     std::vector<double> time_effort, time_angle;
+
+    double cur_depth, cur_roll;
     // std::vector<int> iter_vec, iter_state_vec;
     int iter = 0;
     int iter_state = 0;

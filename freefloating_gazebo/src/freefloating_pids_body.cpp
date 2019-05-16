@@ -244,7 +244,7 @@ void FreeFloatingBodyPids::PositionSPCallBack(const geometry_msgs::PoseStampedCo
   // pose_ang_setpoint_ = Eigen::Quaterniond(_msg->pose.orientation.w, _msg->pose.orientation.x, _msg->pose.orientation.y, _msg->pose.orientation.z);
   // pose_ang_setpoint_ = Eigen::Quaterniond(_msg->pose.orientation.w, _msg->pose.orientation.x, _msg->pose.orientation.y, _msg->pose.orientation.z);
   // plot the position of z
-  s_p_z.push_back(z);
+//  s_p_z.push_back(z);
   time_p_sp.push_back(ros::Time::now().toSec());
 
 }
@@ -292,6 +292,7 @@ void FreeFloatingBodyPids::BodyStateCallBack(const nav_msgs::OdometryConstPtr &_
   // plot the state
   v_x.push_back(_msg->twist.twist.linear.x);
   // v_y.push_back(_msg->twist.twist.linear.y);
+  cur_depth = _msg->pose.pose.position.z;
   p_z.push_back(_msg->pose.pose.position.z);
   // roll.push_back(_msg->twist.twist.angular.x);
   float x ,y, z, w;
@@ -308,6 +309,10 @@ void FreeFloatingBodyPids::BodyStateCallBack(const nav_msgs::OdometryConstPtr &_
 
   Eigen::Vector3f rpy = q.toRotationMatrix().eulerAngles(0, 1, 2);
   roll.push_back(_msg->twist.twist.angular.x);
+  cur_roll = rpy[0];
+  if (cur_roll >= 3.0)
+    cur_roll = cur_roll - 3.14159;
+//  std::cout << "current roll is : " << cur_roll << std:: endl;
   // pitch.push_back(_msg->twist.twist.angular.y);
   // yaw.push_back(_msg->twist.twist.angular.z);
 
@@ -321,7 +326,11 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   // velocity setfunction
   setpoint_velocity_ok = true;
   ros::Time t = ros::Time::now();
-  double x = 0;
+  double z = -3.0;
+  s_p_z.push_back(z);
+  double vy = 0;
+  double vz = 0.1 * (z - cur_depth);
+  double vx = 0.0;
 
 //  if(ros::Time::now().toSec()>=10 && ros::Time::now().toSec() <= 70)
 //    x = 0.05;
@@ -331,42 +340,17 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
 // /vectored_auv/state/twist/twist/angular/x
 
 
-
-  double v_roll = 0.0;
-  // if((ros::Time::now().toSec()>= 10&&ros::Time::now().toSec()<=30))
-  //   v_roll = 0.05;
-  // else if((ros::Time::now().toSec()>=40 && ros::Time::now().toSec()<=60))
-  //   v_roll = -0.05;
-  // if((ros::Time::now().toSec()>= 30 && ros::Time::now().toSec()<=50)|| (ros::Time::now().toSec()>= 70 && ros::Time::now().toSec()<=90))
-  //   v_roll = 0.05;
-  // else if((ros::Time::now().toSec()>= 50 && ros::Time::now().toSec()<=70) || (ros::Time::now().toSec()>= 90 && ros::Time::now().toSec()<=110))
-  //   v_roll = -0.05;
-//  if(ros::Time::now().toSec()>= 40)
-//    v_roll = 0.1;
-//  if(ros::Time::now().toSec()>= 120)
-//    v_roll = -0.1;
+  double desird_roll = 0.5;
+  double v_roll = 0.1 * (desird_roll - cur_roll) ;
+  double v_pitch = 0.0;
+  double v_yaw = 0.0;
+//  roll.push_back(desird_roll);
 
 
-  // else if(ros::Time::now().toSec()>=35)
-  //   v_roll = -0.05;
+    velocity_lin_setpoint_ = Eigen::Vector3d(vx, vy, vz);
+    velocity_ang_setpoint_ = Eigen::Vector3d(v_roll, v_pitch, v_yaw);
 
-
-    // double v_roll = 0;
-
-    // double y = 0;
-    // double z = 0;
-    // if(ros::Time::now().toSec()<=10)
-    //   z = -1;
-  // double v_pitch = 0;
-  // double v_yaw = 0;
-
-  // velocity_lin_setpoint_ = Eigen::Vector3d(x, y, z);
-  //
-  // velocity_ang_setpoint_ = Eigen::Vector3d(v_roll,v_pitch,v_yaw);
-    velocity_lin_setpoint_ = Eigen::Vector3d(x, 0, 0);
-    velocity_ang_setpoint_ = Eigen::Vector3d(v_roll, 0, 0);
-
-  s_v_x.push_back(x);
+  s_v_x.push_back(vx);
   // s_v_y.push_back(y);
   // s_v_z.push_back(-0.02);
   s_roll.push_back(v_roll);
@@ -396,7 +380,7 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
 
   plt::figure();
   plt::named_plot("actual depth",time_state,p_z);
-  plt::named_plot("desired depth",time_p_sp,s_p_z);
+  plt::named_plot("desired depth",time_sp,s_p_z);
   plt::legend();
   plt::title("depth");
   plt::save("/home/x1ao/master/master_thesis_auv/test01/depth.png");

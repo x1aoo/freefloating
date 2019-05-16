@@ -271,7 +271,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   {
       A[i][i/2]=(1-i%2)-i%2;
   }
-  std::cout << "A is \n" << A << std::endl;
+//  std::cout << "A is \n" << A << std::endl;
 
   double cost_delta = 0.0;
   delta_state[0] = 10;
@@ -294,7 +294,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     // vpColVector b(14), beq(6), delta_state(7);
 
     vec_iter.push_back(double(iter++));
-    std::cout << "iter is " << iter << std::endl;
+//    std::cout << "iter is " << iter << std::endl;
 
 //    check the loop
     vec_delta_state_fl.push_back(cost_delta);

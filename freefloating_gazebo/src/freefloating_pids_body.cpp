@@ -323,8 +323,8 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   ros::Time t = ros::Time::now();
   double x = 0;
 
-  if(ros::Time::now().toSec()>=10 && ros::Time::now().toSec() <= 70)
-    x = 0.05;
+//  if(ros::Time::now().toSec()>=10 && ros::Time::now().toSec() <= 70)
+//    x = 0.05;
 
 
 // /vectored_auv/state/twist/twist/linear/x
@@ -341,10 +341,10 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   //   v_roll = 0.05;
   // else if((ros::Time::now().toSec()>= 50 && ros::Time::now().toSec()<=70) || (ros::Time::now().toSec()>= 90 && ros::Time::now().toSec()<=110))
   //   v_roll = -0.05;
-//  if(ros::Time::now().toSec()>= 40)
-//    v_roll = 0.1;
-//  if(ros::Time::now().toSec()>= 120)
-//    v_roll = -0.1;
+  if(ros::Time::now().toSec()>= 40)
+    v_roll = 0.1;
+  if(ros::Time::now().toSec()>= 120)
+    v_roll = -0.1;
 
 
   // else if(ros::Time::now().toSec()>=35)

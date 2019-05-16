@@ -51,11 +51,11 @@ There is no problem here.
 
 ### Change the work mode to velocity: change the setpoint of depth
 
--test the velocity control of z using depth(vz = 0.1 * (current_depth - desire_depth)
+- test the velocity control of z using depth(vz = 0.1 * (current_depth - desire_depth)
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/depth_velocity.png)
 
--the roll could not achieve whether we set the roll a value of the function 0.1 * (current_angle - desire_angle)
+- the roll could not achieve whether we set the roll a value of the function 0.1 * (current_angle - desire_angle)
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/roll_velocity.png)
 

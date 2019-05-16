@@ -14,3 +14,4 @@ with desired angular velocity in x axis is always 0 and with linear velocity in 
 At the beginnign, the actual linear velocity gose to the desired one and the angular velocity is equal to 0 but at the time: the angular velocity has the big errors
 
 ![image](http://github.com/x1aoo/freefloating/raw/master/image/vx.png)
+![Image text](https://gitlab.com/x1aoo/freefloating/raw/master/image/vx.png)

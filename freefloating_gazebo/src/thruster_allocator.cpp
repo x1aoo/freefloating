@@ -267,6 +267,12 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   vpMatrix Aeq_pre(6,7), Aeq(6,7);
   vpColVector b(14), beq(6), delta_state(7), cost(6), cost_pre(6) ;
 
+  for(int i = 0; i<14 ; i++)
+  {
+      A[i][i/2]=(1-i%2)-i%2;
+  }
+  std::cout << "A is \n" << A << std::endl;
+
   double cost_delta = 0.0;
   delta_state[0] = 10;
 
@@ -290,12 +296,12 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     vec_iter.push_back(double(iter++));
     std::cout << "iter is " << iter << std::endl;
 
+//    check the loop
     vec_delta_state_fl.push_back(cost_delta);
     vec_state_fl.push_back(state[0]);
-    // // std::cout << "iter is " << iter << std::endl;
     if(iter == 1000)
     {
-      std::cout << "iter is " << iter << "\n" << "the maximun value is \n"
+      std::cout << "iter is " << iter << "\n" << "the maximum value is \n"
       << delta_state.getMaxValue() << "\n" << delta_state.getMinValue() << std::endl;
 
       // plt::figure();
@@ -311,6 +317,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
       plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_state_changed_1000.png");
 
     }
+
     // Aeq J(a,f)
     // std::cout << "angle1 is \n" << state_pre[5] << std::endl;
     Aeq[0][0] = cos(state_pre[5]);
@@ -368,7 +375,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     beq = tau - Aeq_pre * state_pre;
 
     //the bouyancy is compensate by PID control
-     beq[2] = beq[2] + (25 * 0.01)*9.8;
+//     beq[2] = beq[2] + (25 * 0.01)*9.8;
 
     // state is delta f delta alpha
     b[0] = f_max - state_pre[0];

@@ -80,12 +80,19 @@ There is no problem here.
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/angles_velocity.png)
 
-### Check the Optimization part: the cost function 17th May
+### Check the Optimization part: the cost and function 17th May
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/cost_rsum.png)
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/cost_rsum_rate.png)
 
 As can be seen, the cost in roll almost take up the whole part in total cost, it is means that the cost calculation has somewhere wrong or the algorithm would not reduce the cost in roll.
 
-So I will first check the cost calculation and if there is not anything wrong, the optimization algorithm has somewhere wrong.
-
+So I will first check： 
+1. the cost calculation and if there is not anything wrong
+    + There is no error here.
+    
+2. the optimization algorithm may have somewhere wrong.
+    + the cost of roll reduce may cause the cost increase of other?
+    + check the delta angles
+    + Find the errors in joint state publisher and the topic remap
+        + Now is try to publish the desired angles in to a suitable place.

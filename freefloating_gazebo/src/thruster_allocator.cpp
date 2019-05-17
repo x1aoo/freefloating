@@ -396,6 +396,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     vpQuadProg qp;
     qp.solveQPi(Aeq,beq, A,b,delta_state);
 
+    std::cout << "delta angles are\n" << delta_state[5] <<"\n" << delta_state[6] << std::endl;
     cost = Aeq * delta_state - beq;
     cost_delta = cost.transpose() * cost - cost_pre.transpose() * cost_pre;
     cost_pre = cost;
@@ -407,6 +408,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
       in_loop = false;
 
   }
+
 
     cost = Aeq * delta_state - beq;
     double cost_sum = cost.transpose() * cost;
@@ -471,7 +473,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
 
     plt::figure();
-    plt::named_plot("sum tau square",plot_time,plot_cost_sum);
+    plt::named_plot("sum of tau square",plot_time,plot_cost_sum);
     plt::named_plot("tau square in roll",plot_time,plot_cost_roll_square);
 
     plt::ylim(0.0, 1e4);

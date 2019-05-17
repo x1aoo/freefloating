@@ -422,7 +422,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     plot_cost_sum.push_back(cost_sum);
     plot_cost_rate.push_back((cost[3]*cost[3])/cost_sum);
 
-    if(ros::Time::now().toSec()>= 142&& ros::Time::now().toSec()<=144.2)
+    if(ros::Time::now().toSec()>= 32&& ros::Time::now().toSec()<=34.2)
     {
     plt::figure();
     plt::named_plot("tau in x",plot_time,plot_cost_x);
@@ -474,7 +474,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     plt::named_plot("sum tau square",plot_time,plot_cost_sum);
     plt::named_plot("tau square in roll",plot_time,plot_cost_roll_square);
 
-    plt::ylim(0.0, 1e5);
+    plt::ylim(0.0, 1e4);
     plt::legend();
     plt::title("cost");
     plt::save("/home/x1ao/master/master_thesis_auv/test01/cost_rsum.png");
@@ -483,7 +483,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     plt::named_plot("cost of roll/sum of cost",plot_time,plot_cost_rate);
     // plt::named_plot("tau square in roll",plot_time,plot_cost_roll_square);
 
-    // plt::ylim(0.0, 1e5);
+     plt::ylim(0.0, 1.1);
     plt::legend();
     plt::title("cost rate");
     plt::save("/home/x1ao/master/master_thesis_auv/test01/cost_rsum_rate.png");

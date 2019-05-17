@@ -363,7 +363,7 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   // to output the time
   std::cout << ros::Time::now().toSec() << std::endl;
 
-  if(ros::Time::now().toSec()>= 140&& ros::Time::now().toSec()<=140.2)
+  if(ros::Time::now().toSec()>= 30&& ros::Time::now().toSec()<=30.2)
   {
     //to plot the x and roll velocity
   plt::figure();

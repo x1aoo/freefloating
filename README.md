@@ -12,7 +12,7 @@ The plots are not in this folder and tha main problem now is the roll motion are
 
 ## Debug report:
 
-### Try to find the caurse of errors: 15th May
+### Try to find the caurse of errors: 16th May
 
 Linear velocity in x axis(vx) :
 with desired angular velocity in x axis is always 0 and with linear velocity in x axis:
@@ -26,11 +26,11 @@ At the beginning, the actual linear velocity gose to the desired one and the ang
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/angles.png)
 
-Since we do not set the desired angular velocity in x axis, the angles are not expected to have the big change like that but it may because the robot want to stablize the angular velocity(roll) but from the roll plot it do not have the position effect. It seems that the algorithm can not control the robot in a proper way. 
+Since we do not set the desired angular velocity in x axis, the angles are not expected to have the big change like that but it may because the robot want to stablize the angular velocity(roll) but from the roll plot it do not have the position effect. It seems that the algorithm can not control the robot in a proper way.
 
 However, I already checked several times the optimization algorithm(QP) and do not find the errors. But may be due to the fact of PID gains of angular velcocity in x axis(roll).
 
-### Check the PID gains: 15th May
+### Check the PID gains: 16th May
 
 1. As we can see in the vx plot(the first picture): the PID gains are good enough so we just focus on the PID gains in roll
 2. PID gains in angular velocity in x axis(roll)
@@ -40,7 +40,7 @@ As we can see in the last picture, before around 25s the roll could have a stabl
 
 But what is the symbol of PID gains are correct? The stable begining(without desired value) or the stable tracking? I should check the desired performance.
 
-### Turning PID gains: 16th May
+### Turning PID gains: 17th May
 
 1. The method
     1. First, let Ki = Kd =0, and turning Kp from 0 to larger until the systems begin to oscillate. And then make the Kp become less until the oscillate disappear. The suitable Kp is this Kp value * 0.6
@@ -52,18 +52,18 @@ But what is the symbol of PID gains are correct? The stable begining(without des
 
 However, we can see in the angles plot: after 40s it change rapidly. It satisfies the desired roll motion but we could compare to the non angular motion to test the desired angles change.
 
-### Check angles change: 15th May
+### Check angles change: 16th May
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_angles.png)
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_roll.png)
 
 It is very unusual that after around 40s, the angular has the big errors and I do not know where cause the errors. Since after 5s the robot arrived its desired depth and no change on other direction. So why the robot will go into this situation? And also, we could not confirm that the optimization process is correct due to the angles change is similar to the previous one. That is: after 40s the angles will change rapidly. So I will check if somewhere wrong in implementation leading this fact especially in the desired velocity setpoint or we need to change the work mode: it means that the control axis are not freely.
 
-### Check the desired velocity setpoint especially in angular velocity: 15th May
+### Check the desired velocity setpoint especially in angular velocity: 16th May
 
 There is no problem here.
 
-### Change the work mode to velocity: change the setpoint of depth: 15th May
+### Change the work mode to velocity: change the setpoint of depth: 16th May
 
 - test the velocity control of z using depth(vz = 0.1 * (current_depth - desire_depth)
 
@@ -74,12 +74,18 @@ There is no problem here.
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/roll_velocity.png)
 
 1. I do not know what cause the roll motion set point useless
+    + check the optimization part.
 2. I do not know what happens in 45s and 120s
 3. The angles go correctly
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/angles_velocity.png)
 
-### For now, I have no idea what I should check next step.
+### Check the Optimization part: the cost function 17th May
 
-16th May
+![Image text](https://github.com/x1aoo/freefloating/raw/master/image/cost_rsum.png)
+![Image text](https://github.com/x1aoo/freefloating/raw/master/image/cost_rsum_rate.png)
+
+As can be seen, the cost in roll almost take up the whole part in total cost, it is means that the cost calculation has somewhere wrong or the algorithm would not reduce the cost in roll.
+
+So I will first check the cost calculation and if there is not anything wrong, the optimization algorithm has somewhere wrong.
 

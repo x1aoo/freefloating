@@ -341,7 +341,9 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
 
 
   double desird_roll = 0.5;
-  double v_roll = 0.1 * (desird_roll - cur_roll) ;
+//  double v_roll = 0.1 * (desird_roll - cur_roll) ;
+  double v_roll = 0.1;
+
   double v_pitch = 0.0;
   double v_yaw = 0.0;
 //  roll.push_back(desird_roll);

@@ -34,6 +34,17 @@ However, I already checked several times the optimization algorithm(QP) and do n
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/pure_roll.png)
 
 As we can see in the last picture, before around 25s the roll could have a stable value but after that it has the big errors uncontrollable. I do not think it is due to the PID gains because we do not have any prove that the PID gains could lead to the fact that before 25s it has the stable value and after that it has big errors.
+
+But what is the symbol of PID gains are correct? The stable begining(without desired value) or the stable tracking? I should check the desired performance.
+
+### Turning PID gains:
+
+1. The method
+    1. First, let Ki = Kd =0, and turning Kp from 0 to larger until the systems begin to oscillate. And then make the Kp become less until the oscillate disappear. The suitable Kp is this Kp value * 0.6
+    2. Set a bigger Ki and make the value become less until the systems begin to oscillate. Then make the Ki become bigger until the oscillate disappear. The suitable Ki value should be this Ki value * 1.5
+2. Result
+    + After turning PID gains, it shows that the oscillate never stop at the turning Kp and Ki process.
+
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/pure_angles.png)
 
 However, we can see in the angles plot: after 40s it change rapidly. It satisfies the desired roll motion but we could compare to the non angular motion to test the desired angles change.
@@ -66,3 +77,4 @@ There is no problem here.
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/angles_velocity.png)
 
 ### For now, I have no idea what I should check next step.
+

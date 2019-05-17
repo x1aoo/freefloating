@@ -98,7 +98,7 @@ int main(int argc, char ** argv)
   // -- Init body ------------------
   // PID's class
   std::unique_ptr<FreeFloatingBodyPids> body_pid;
-  ros::Publisher body_command_publisher;
+  ros::Publisher body_command_publisher, joint_setpoint_publisher;
   // to test the body_pid output
   // ros::Publisher body_pid_publisher;
   // std::string default_mode = "position";
@@ -120,6 +120,11 @@ int main(int argc, char ** argv)
     // command
     body_command_publisher =
         nh.advertise<sensor_msgs::JointState>("thruster_command", 1);
+
+    joint_setpoint_publisher =
+        nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
+
+
     // joint_publisher = nh.advertise<sensor_msgs::JointState>("joint_setpoint", 1);
     // to test the body_pid output
     // body_pid_publisher =
@@ -168,8 +173,8 @@ int main(int argc, char ** argv)
         // body_command_publisher.publish(allocator.wrench2Thrusters(body_pid->WrenchCommand(), angle1, angle2, fl, fr, f2, f3, f4, nh));
         // if((int)(ros::Time::now().toSec())%2==0)
         
-          body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-
+        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
+//        joint_setpoint_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh)[1]);
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

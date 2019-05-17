@@ -93,6 +93,8 @@ So I will first check：
     
 2. the optimization algorithm may have somewhere wrong.
     + the cost of roll reduce may cause the cost increase of other?
-    + check the delta angles
-    + Find the errors in joint state publisher and the topic remap
-        + Now is try to publish the desired angles in to a suitable place.
+    + check the delta angles(done)
+    + Find the errors in joint state publisher and the topic remap(done)
+        + Now is try to publish the desired angles in to a suitable place.(done)
+        + After test, the systems could publish the angles correctly although we could not see clearly in rqt graph
+        + The result still wrong and I do not know where gose wrong.        

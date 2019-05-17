@@ -233,7 +233,9 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters(const geometry_msgs:
 
 
 
+//std::vector<sensor_msgs::JointState> ThrusterAllocator::wrench2Thrusters_iterative(const geometry_msgs::Wrench &cmd, vpColVector state_pre, ros::NodeHandle &nh) const
 sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geometry_msgs::Wrench &cmd, vpColVector state_pre, ros::NodeHandle &nh) const
+
 {
 
   // std::cout << "state_pre\n" << state_pre << std::endl;
@@ -396,7 +398,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     vpQuadProg qp;
     qp.solveQPi(Aeq,beq, A,b,delta_state);
 
-    std::cout << "delta angles are\n" << delta_state[5] <<"\n" << delta_state[6] << std::endl;
+//    std::cout << "delta angles are\n" << delta_state[5] <<"\n" << delta_state[6] << std::endl;
     cost = Aeq * delta_state - beq;
     cost_delta = cost.transpose() * cost - cost_pre.transpose() * cost_pre;
     cost_pre = cost;
@@ -499,15 +501,21 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     joint_msg.name.push_back("fwd_right");
     joint_msg.position.push_back(state[5]);
     joint_msg.position.push_back(state[6]);
+//    std::cout << "joint msg position[0] is " << joint_msg.position[0] << "\n"
+//    << "state[5] is " << state[5] << std::endl;
 
     ros::Publisher Joint_Command_Publisher;
     Joint_Command_Publisher = nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
     Joint_Command_Publisher.publish(joint_msg);
 
-  sensor_msgs::JointState msg;
+
+//    std::vector<sensor_msgs::JointState> msg;
+    sensor_msgs::JointState msg;
+
+//  sensor_msgs::JointState msg;
   msg.name = names;
   msg.effort.reserve(names.size());
-
+//
   for(int i = 0; i < state.size()-2; i++)
     msg.effort.push_back(state[i]);
 

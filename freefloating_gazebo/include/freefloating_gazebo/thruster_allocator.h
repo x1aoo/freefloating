@@ -22,6 +22,8 @@ public:
   // parse raw param to get thruster max force and map
   ThrusterAllocator(ros::NodeHandle &nh);
 
+
+
   std::vector<std::string> initControl(ros::NodeHandle &nh, double map_threshold = 1e-2);//to push the controlled axes to the nh and map_threshold is useless
   bool has_thrusters() const {return names.size();}
 
@@ -41,7 +43,8 @@ public:
   void saturate(Eigen::VectorXd &_command) const;
 
   sensor_msgs::JointState wrench2Thrusters(const geometry_msgs::Wrench  & cmd, double angle1, double angle2, double fl, double fr, double f2, double f3, double f4, ros::NodeHandle &nh) const;
-  sensor_msgs::JointState wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
+//  std::vector<sensor_msgs::JointState> wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
+    sensor_msgs::JointState wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
 
   ffg::HydroLink base_link;
   std::vector<uint> steer_idx, fixed_idx;

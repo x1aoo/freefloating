@@ -1,4 +1,7 @@
 # freefloating
+
+The readme was created on 16th May, before that I already finished the main implementation part but there are some unknown errors here. And that is also the reason why I created this file, to debug...
+
 The master thesis: Control of an Autunomous Underwater with Vectored Thrusters
 
 /freefloating_gazebo : is to do the PID control and control allocation in gazebo
@@ -9,7 +12,7 @@ The plots are not in this folder and tha main problem now is the roll motion are
 
 ## Debug report:
 
-### Try to find the caurse of errors
+### Try to find the caurse of errors: 15th May
 
 Linear velocity in x axis(vx) :
 with desired angular velocity in x axis is always 0 and with linear velocity in x axis:
@@ -27,7 +30,7 @@ Since we do not set the desired angular velocity in x axis, the angles are not e
 
 However, I already checked several times the optimization algorithm(QP) and do not find the errors. But may be due to the fact of PID gains of angular velcocity in x axis(roll).
 
-### Check the PID gains:
+### Check the PID gains: 15th May
 
 1. As we can see in the vx plot(the first picture): the PID gains are good enough so we just focus on the PID gains in roll
 2. PID gains in angular velocity in x axis(roll)
@@ -37,7 +40,7 @@ As we can see in the last picture, before around 25s the roll could have a stabl
 
 But what is the symbol of PID gains are correct? The stable begining(without desired value) or the stable tracking? I should check the desired performance.
 
-### Turning PID gains:
+### Turning PID gains: 16th May
 
 1. The method
     1. First, let Ki = Kd =0, and turning Kp from 0 to larger until the systems begin to oscillate. And then make the Kp become less until the oscillate disappear. The suitable Kp is this Kp value * 0.6
@@ -49,18 +52,18 @@ But what is the symbol of PID gains are correct? The stable begining(without des
 
 However, we can see in the angles plot: after 40s it change rapidly. It satisfies the desired roll motion but we could compare to the non angular motion to test the desired angles change.
 
-### Check angles change:
+### Check angles change: 15th May
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_angles.png)
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/no_roll.png)
 
 It is very unusual that after around 40s, the angular has the big errors and I do not know where cause the errors. Since after 5s the robot arrived its desired depth and no change on other direction. So why the robot will go into this situation? And also, we could not confirm that the optimization process is correct due to the angles change is similar to the previous one. That is: after 40s the angles will change rapidly. So I will check if somewhere wrong in implementation leading this fact especially in the desired velocity setpoint or we need to change the work mode: it means that the control axis are not freely.
 
-### Check the desired velocity setpoint especially in angular velocity:
+### Check the desired velocity setpoint especially in angular velocity: 15th May
 
 There is no problem here.
 
-### Change the work mode to velocity: change the setpoint of depth
+### Change the work mode to velocity: change the setpoint of depth: 15th May
 
 - test the velocity control of z using depth(vz = 0.1 * (current_depth - desire_depth)
 
@@ -77,4 +80,6 @@ There is no problem here.
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/angles_velocity.png)
 
 ### For now, I have no idea what I should check next step.
+
+16th May
 

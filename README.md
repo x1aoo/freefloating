@@ -18,14 +18,16 @@ Linear velocity in x axis(vx) :
 with desired angular velocity in x axis is always 0 and with linear velocity in x axis:
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/vx.png)
-
+    **Fig. 1** Linear velocity in x axis
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/roll.png)
-
+    **Fig. 2** Angular velocity in x axis
+    
 At the beginning, the actual linear velocity gose to the desired one and the angular velocity is equal to 0 but at the time:50 the angular velocity has the big errors and at the time 55 the linear velocity has the errors
 
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/angles.png)
-
+    **Fig. 3** The thrusters' angles change
+    
 Since we do not set the desired angular velocity in x axis, the angles are not expected to have the big change like that but it may because the robot want to stablize the angular velocity(roll) but from the roll plot it do not have the position effect. It seems that the algorithm can not control the robot in a proper way.
 
 However, I already checked several times the optimization algorithm(QP) and do not find the errors. But may be due to the fact of PID gains of angular velcocity in x axis(roll).
@@ -35,7 +37,8 @@ However, I already checked several times the optimization algorithm(QP) and do n
 1. As we can see in the vx plot(the first picture): the PID gains are good enough so we just focus on the PID gains in roll
 2. PID gains in angular velocity in x axis(roll)
 ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/pure_roll.png)
-
+    **Fig. 4** Turning PID
+    
 As we can see in the last picture, before around 25s the roll could have a stable value but after that it has the big errors uncontrollable. I do not think it is due to the PID gains because we do not have any prove that the PID gains could lead to the fact that before 25s it has the stable value and after that it has big errors.
 
 But what is the symbol of PID gains are correct? The stable begining(without desired value) or the stable tracking? I should check the desired performance.
@@ -98,6 +101,23 @@ So I will first check：
         + Now is try to publish the desired angles in to a suitable place.(done)
         + After test, the systems could publish the angles correctly although we could not see clearly in rqt graph
         + The result still wrong and I do not know where gose wrong.        
-
+3. The potential method
+    + Use velocity control in joint control instead of position control
+        + If it works, to think about with velocity make it but position control
+        + The f should not be 0 from the 3rd derivative function(Could we do not give the linear velocity in x axis)
 ### Next Step is to do the 3rd order derivative May 19th
 
+## To do the 3rd order derivative method:
+### Planning
++ Time:
+    + Within 3 days: From 20th to 22th May
+        + [] Plan(1) 20th
+        + [] Plan(2) 21th
+        + [] Plan(3) 21th to 22th
++ Plan:
+    + [] Check the function again carefully and clearly.
+    + [] Copy another code file to do the implementation
+    + [] Test with the desired trajectory tracking.
+    + [] Ask for a meeting
+    
+### 3rd order function

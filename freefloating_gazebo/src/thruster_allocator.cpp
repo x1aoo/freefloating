@@ -355,6 +355,8 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     Aeq[4][6] = cos(state_pre[6]) * state_pre[1] * lx2;
     Aeq[5][6] = sin(state_pre[6]) * state_pre[1] * ly2;
 
+
+
     // Aeq_pre - T(a)
     Aeq_pre[0][0] = Aeq[0][0];
     Aeq_pre[2][0] = Aeq[2][0];
@@ -521,5 +523,96 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
   return msg;
 }
+
+sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, ros::NodeHandle &nh) const
+{
+   vpMatrix Aeq(6,7);
+   Eigen::Matrix<float, 6, 6> tor2acc;
+   Eigen::Matrix<float, 7, 1> f_angle_3rd, f_angle_2nd;
+   Eigen::Matrix<float, 6, 1> pose_2nd, pose_3rd;
+   Eigen::Matrix3f inertia;
+   Eigen::Matrix<float, 6, 7> map2tor_3rd;
+   Eigen::Matrix<float, 6, 5> map2tor_2nd;
+   Eigen::Matrix<float, 3, 1> pd, dpd, ddpd, dddpd;
+   Eigen::Matrix<float, 3, 1> rd, wd, wdd, wddd;
+   Eigen::Matrix<float, 3, 1> p, dp, ddp, dddp;
+   Eigen::Matrix<float, 3, 1> r, w, dw, ddw;
+
+   float m;
+//    sth may wrong here
+   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f, Eigen::Matrix3f, inertia;
+
+    double body_length, body_radius, tr2, tr1, tl1;
+    body_length = 1.5;
+    body_radius = 0.13;
+    tr2 = .05;
+    tr1 = 0.02;
+    tl1 = 0.1;
+    double lx1,lx2,lx4,lx5,ly1,ly2;
+
+    lx1 = lx2 = -body_length/3.0;
+    ly1 = body_radius+tr2;
+    ly2 = -(body_radius+tr2);
+    lx4 = -0.3*body_length;
+    lx5 = 0.3*body_length;
+
+    Aeq[0][0] = cos(state_pre[5]);
+    Aeq[2][0] = -sin(state_pre[5]);
+    Aeq[3][0] = -sin(state_pre[5]) * ly1;
+    Aeq[4][0] = sin(state_pre[5]) * lx1;
+    Aeq[5][0] = -cos(state_pre[5]) * ly1;
+    // std::cout << "cos(angle1) is " << Aeq[0][0] << std::endl;
+
+    Aeq[0][1] = cos(state_pre[6]);
+    Aeq[2][1] = -sin(state_pre[6]);
+    Aeq[3][1] = -sin(state_pre[6]) * ly2;
+    Aeq[4][1] = sin(state_pre[6]) * lx2;
+    Aeq[5][1] = -cos(state_pre[6]) * ly2;
+
+    Aeq[1][2] = 1.0;
+
+    Aeq[2][3] = -1.0;
+    Aeq[4][3] = lx4;
+
+    Aeq[2][4] = -1.0;
+    Aeq[4][4] = lx5;
+
+    Aeq[0][5] = -sin(state_pre[5]) * state_pre[0];
+    Aeq[2][5] = -cos(state_pre[5]) * state_pre[0];
+    Aeq[3][5] = -cos(state_pre[5]) * state_pre[0] * ly1;
+    Aeq[4][5] = cos(state_pre[5]) * state_pre[0] * lx1 ;
+    Aeq[5][5] = sin(state_pre[5]) * state_pre[0] * ly1;
+
+    Aeq[0][6] = -sin(state_pre[6]) * state_pre[1];
+    Aeq[2][6] = -cos(state_pre[6]) * state_pre[1];
+    Aeq[3][6] = cos(state_pre[6]) * state_pre[1] * ly2;
+    Aeq[4][6] = cos(state_pre[6]) * state_pre[1] * lx2;
+    Aeq[5][6] = sin(state_pre[6]) * state_pre[1] * ly2;
+
+    for(int i = 0; i<6 ; i++)
+        for(int j =0; j < 7; j++)
+            map2tor_3rd(i,j) = float(Aeq[i][j]);
+
+
+    for(int i = 0; i < 6; i++)
+        for(int j = 0; j < 5; j++)
+            map2tor_2nd(i,j) = map2tor_3rd(i,j);
+    // need to call to master to get the f_angle_2nd
+    pose_2nd = tor2acc * map2tor_2nd * f_angle_2nd;
+
+
+    // need to calculate the pose_3d in PID-like function
+    f_angle_3rd = map2tor_3rd.inverse() * tor2acc.inverse() * pose_3rd;
+
+
+
+
+
+
+
+
+
+}
+
 
 }

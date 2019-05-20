@@ -40,19 +40,27 @@ public:
     return wrench;
   }
 
+
   void saturate(Eigen::VectorXd &_command) const;
 
   sensor_msgs::JointState wrench2Thrusters(const geometry_msgs::Wrench  & cmd, double angle1, double angle2, double fl, double fr, double f2, double f3, double f4, ros::NodeHandle &nh) const;
 //  std::vector<sensor_msgs::JointState> wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
     sensor_msgs::JointState wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
+    sensor_msgs::JointState wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
 
-  ffg::HydroLink base_link;
+
+    ffg::HydroLink base_link;
   std::vector<uint> steer_idx, fixed_idx;
   std::vector<std::string> names;//pase from passer
   std::vector<double> max_thrust, max_wrench, max_vel;
 
   Eigen::MatrixXd map;
   Eigen::MatrixXd inverse_map;
+
+
+
+
+
 };
 
 }

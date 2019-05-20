@@ -26,44 +26,32 @@ void JointStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
   angle2 = _msg->position[1];
   state_pre[5] = angle1;
   state_pre[6] = angle2;
+  std::cout << "JointStateCallBack over" << std::endl;
 
-  // std::cout << "angle 1 = \n" << angle1 << std::endl;
-  // v_x.push_back(_msg->velocity[0]);
-  // v_y.push_back(_msg->velocity[1]);
-  // v_z.push_back(_msg->velocity[2]);
-  // roll.push_back(_msg->velocity[3]);
-  // pitch.push_back(_msg->velocity[4]);
-  // yaw.push_back(_msg->velocity[5]);
-  // std::cout << "v_x = " << v_x <<  std::endl;
 }
 
-// void BodyStateCallBack(const nav_msgs::OdometryConstPtr &_msg)
-// {
-//
-//   // ROS_INFO("I am in the JointStateCallBack function");
-//   // std::cout << "I am in the JointStateCallBack function" << std::endl;
-//   // test = _msg->pose.pose.position.x;
-//   // angle2 = _msg->pose.pose.position.y;
-//   // state_pre[5] = angle1;
-//   // state_pre[6] = angle2;
-//   v_x.push_back(_msg->twist.twist.linear.x);
-//   v_y.push_back(_msg->twist.twist.linear.y);
-//   v_z.push_back(_msg->twist.twist.linear.z);
-//   roll.push_back(_msg->twist.twist.angular.x);
-//   pitch.push_back(_msg->twist.twist.angular.y);
-//   yaw.push_back(_msg->twist.twist.angular.z);
-//   // std::cout << "test = \n" << test << std::endl;
-//
-//
-//   // std::cout << "v_x = " << v_x <<  std::endl;
-// }
+ void BodyStateCallBack(const nav_msgs::OdometryConstPtr &_msg)
+ {
+
+     state_posi[0] = _msg->pose.pose.position.x;
+     state_posi[1] = _msg->pose.pose.position.y;
+     state_posi[2] = _msg->pose.pose.position.z;
+     state_posi[3] = _msg->pose.pose.orientation.x/_msg->pose.pose.orientation.w;
+     state_posi[4] = _msg->pose.pose.orientation.y/_msg->pose.pose.orientation.w;
+     state_posi[5] = _msg->pose.pose.orientation.z/_msg->pose.pose.orientation.w;
+
+     state_vel[0] = _msg->twist.twist.linear.x;
+     state_vel[1] = _msg->twist.twist.linear.y;
+     state_vel[2] = _msg->twist.twist.linear.z;
+     state_vel[3] = _msg->twist.twist.angular.x;
+     state_vel[4] = _msg->twist.twist.angular.y;
+     state_vel[5] = _msg->twist.twist.angular.z;
+     std::cout << "BodyStateCallBack over" << std::endl;
+ }
 
 
 void ThrusterStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
 {
-  // ROS_INFO("I am in the JointStateCallBack function");
-  // std::cout << "I am in the ThrusterStateCallBack function" << std::endl;
-
   fl = _msg->effort[0];
   fr = _msg->effort[1];
   f2 = _msg->effort[2];
@@ -74,24 +62,7 @@ void ThrusterStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
   state_pre[2] = f2;
   state_pre[3] = f3;
   state_pre[4] = f4;
-
-  state_posi[0] = _msg->position[0];
-  state_posi[1] = _msg->position[1];
-  state_posi[2] = _msg->position[2];
-  state_posi[3] = _msg->position[3];
-  state_posi[4] = _msg->position[4];
-  state_posi[5] = _msg->position[5];
-
-  state_vel[0] = _msg->velocity[0];
-  state_vel[1] = _msg->velocity[1];
-  state_vel[2] = _msg->velocity[2];
-  state_vel[3] = _msg->velocity[3];
-  state_vel[4] = _msg->velocity[4];
-  state_vel[5] = _msg->velocity[5];
-
-
-  // std::cout << "f is \n" << fl << fr << f2 << f3 << f4 << std::endl;
-  // std::cout << "angle1 = " << angle1 << " angle2 = " << angle2 << std::endl;
+  std::cout << "ThrusterStateCallBack over" << std::endl;
 }
 
 int main(int argc, char ** argv)
@@ -158,7 +129,8 @@ int main(int argc, char ** argv)
   //check if we need to control joint,in our case, we need to control joints
   if(control_joints)
   {
-    default_mode = "position";//the body control and the joint control may different
+//    default_mode = "position";//the body control and the joint control may different
+      default_mode = "velocity";
     if(priv.hasParam("joint_control"))
       priv.getParam("joint_control", default_mode);
 
@@ -184,7 +156,7 @@ int main(int argc, char ** argv)
     // add the joint states in it.
         joint_states_subscriber = nh.subscribe("/vectored_auv/joint_states", 1, &JointStateCallBack);
 
-        // body_states_subscriber = nh.subscribe("/vectored_auv/state", 1, &BodyStateCallBack);
+         body_states_subscriber = nh.subscribe("/vectored_auv/state", 1, &BodyStateCallBack);
         // std::cout << "ros::Subscriber" << std::endl;
 
         thruster_state_subscriber = nh.subscribe("/vectored_auv/thruster_command", 1, &ThrusterStateCallBack);
@@ -194,7 +166,7 @@ int main(int argc, char ** argv)
         // if((int)(ros::Time::now().toSec())%2==0)
         
 //        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel nh));
+        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh));
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

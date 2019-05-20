@@ -108,7 +108,7 @@ So I will first check：
 ### Next Step is to do the 3rd order derivative May 19th
 
 ## To do the 3rd order derivative method:
-### Planning
+### Planning May 20th
 + Time:
     + Within 3 days: From 20th to 22th May
         + [] Plan(1) 20th
@@ -120,5 +120,7 @@ So I will first check：
     + [] Test with the desired trajectory tracking.
     + [] Ask for a meeting
     
-### 3rd order function
+### 3rd order function May 20th
 + First use the simple trajectory: P = 0, w = constant = 10 degree/s in x;
++ Still have some bugs need to debug
+    + The initialize of Eigen Matrix has somewhere wrong.

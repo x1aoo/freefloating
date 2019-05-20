@@ -1,10 +1,10 @@
 #include <freefloating_gazebo/thruster_allocator.h>
 #include <visp/vpFeaturePoint.h>
-// #include <freefloating_gazebo/optim.h>
 #include <algorithm>
 #include <ecn_common/vpQuadProg.h>
-
 #include </home/x1ao/master/master_thesis_auv/ros_auv/src/freefloating_gazebo/src/matplotlibcpp.h>
+#include <Eigen/Dense>
+
 
 namespace plt = matplotlibcpp;
 
@@ -524,7 +524,9 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   return msg;
 }
 
-sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, ros::NodeHandle &nh) const
+
+
+sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh) const
 {
    vpMatrix Aeq(6,7);
    Eigen::Matrix<float, 6, 6> tor2acc;
@@ -532,15 +534,16 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
    Eigen::Matrix<float, 6, 1> pose_2nd, pose_3rd;
    Eigen::Matrix3f inertia;
    Eigen::Matrix<float, 6, 7> map2tor_3rd;
-   Eigen::Matrix<float, 6, 5> map2tor_2nd;
+   Eigen::Matrix<float, 6, 7> map2tor_2nd;
    Eigen::Matrix<float, 3, 1> pd, dpd, ddpd, dddpd;
-   Eigen::Matrix<float, 3, 1> rd, wd, wdd, wddd;
+   Eigen::Matrix<float, 3, 1> rd, wd, dwd, ddwd;
    Eigen::Matrix<float, 3, 1> p, dp, ddp, dddp;
    Eigen::Matrix<float, 3, 1> r, w, dw, ddw;
 
-   float m;
-//    sth may wrong here
-   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f, Eigen::Matrix3f, inertia;
+   float m = 25.0;
+   float kp1, kp2, kp3, kw1, kw2, kw3;
+
+   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f::Zero(), Eigen::Matrix3f::Zero(), inertia;
 
     double body_length, body_radius, tr2, tr1, tl1;
     body_length = 1.5;
@@ -561,7 +564,6 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     Aeq[3][0] = -sin(state_pre[5]) * ly1;
     Aeq[4][0] = sin(state_pre[5]) * lx1;
     Aeq[5][0] = -cos(state_pre[5]) * ly1;
-    // std::cout << "cos(angle1) is " << Aeq[0][0] << std::endl;
 
     Aeq[0][1] = cos(state_pre[6]);
     Aeq[2][1] = -sin(state_pre[6]);
@@ -598,17 +600,59 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
         for(int j = 0; j < 5; j++)
             map2tor_2nd(i,j) = map2tor_3rd(i,j);
     // need to call to master to get the f_angle_2nd
+    for(int i = 0; i < state_pre.size(); i++)
+        pose_2nd(i) = state_pre[i];
     pose_2nd = tor2acc * map2tor_2nd * f_angle_2nd;
 
+    //init state
+    for(int i = 0; i<p.size(); i++)
+    {
+        p << state_poi[i];
+        r << state_poi[i+3]
+    }
+    for(int i =0; i < dp.size(); i++)
+    {
+        dp << state_vel[i];
+        w << state_vel[i+3]
+    }
+    //the desired trajectory
+    wd << 10.0 / 180.0 * 3.14, 0, 0;
+    rd << wd * ros::Time::now().toSec(), 0, 0;
+    //calculate the 2nd derivative value
 
-    // need to calculate the pose_3d in PID-like function
-    f_angle_3rd = map2tor_3rd.inverse() * tor2acc.inverse() * pose_3rd;
+    //PID-like function
+    dddp = dddpd + kp1 * (ddpd - ddp) + kp2 * (dpd - dp) + kp3 * (pd - p);
+    ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd - w) + kw3 * (rd - r);
+    pose_3rd << dddp, ddw;
 
+    Eigen::Matrix<float, 7, 6> map2tor_3rd_inv;
+    vpMatrix Aeq_inv = Aeq.pseudoInverse();
+    for(int i = 0; i < Aeq_inv.getCols(); i++)
+        for(int j =0; j < Aeq_inv.getRows(); j++)
+            map2tor_3rd_inv << Aeq.pseudoInverse()[i][j];
 
+    f_angle_3rd = map2tor_3rd_inv * tor2acc.inverse() * pose_3rd;
 
+// publish to joint setpoint and body setpoint
+    sensor_msgs::JointState joint_msg;
 
+    joint_msg.name.push_back("fwd_left");
+    joint_msg.name.push_back("fwd_right");
+    joint_msg.velocity.push_back(f_angle_3rd(5));
+    joint_msg.velocity.push_back(f_angle_3rd(6));
 
+    ros::Publisher Joint_Command_Publisher;
+    Joint_Command_Publisher = nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
+    Joint_Command_Publisher.publish(joint_msg);
 
+    sensor_msgs::JointState msg;
+    msg.name = names;
+    msg.effort.reserve(names.size());
+
+    for(int i = 0; i < f_angle_3rd.size()-2; i++)
+        msg.effort.push_back(f_angle_3rd(i));
+
+    return msg;
 
 
 

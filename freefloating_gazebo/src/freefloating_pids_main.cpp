@@ -8,6 +8,9 @@
 using std::cout;
 using std::endl;
 vpColVector state_pre(7);
+vpColVector state_posi(8);
+vpColVector state_vel(8);
+
 double angle1, angle2, fl, fr, f2, f3, f4;
 std::vector<double>v_x, v_y, v_z, roll, pitch, yaw;
 // double test;
@@ -23,6 +26,7 @@ void JointStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
   angle2 = _msg->position[1];
   state_pre[5] = angle1;
   state_pre[6] = angle2;
+
   // std::cout << "angle 1 = \n" << angle1 << std::endl;
   // v_x.push_back(_msg->velocity[0]);
   // v_y.push_back(_msg->velocity[1]);
@@ -70,6 +74,22 @@ void ThrusterStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
   state_pre[2] = f2;
   state_pre[3] = f3;
   state_pre[4] = f4;
+
+  state_posi[0] = _msg->position[0];
+  state_posi[1] = _msg->position[1];
+  state_posi[2] = _msg->position[2];
+  state_posi[3] = _msg->position[3];
+  state_posi[4] = _msg->position[4];
+  state_posi[5] = _msg->position[5];
+
+  state_vel[0] = _msg->velocity[0];
+  state_vel[1] = _msg->velocity[1];
+  state_vel[2] = _msg->velocity[2];
+  state_vel[3] = _msg->velocity[3];
+  state_vel[4] = _msg->velocity[4];
+  state_vel[5] = _msg->velocity[5];
+
+
   // std::cout << "f is \n" << fl << fr << f2 << f3 << f4 << std::endl;
   // std::cout << "angle1 = " << angle1 << " angle2 = " << angle2 << std::endl;
 }
@@ -173,8 +193,8 @@ int main(int argc, char ** argv)
         // body_command_publisher.publish(allocator.wrench2Thrusters(body_pid->WrenchCommand(), angle1, angle2, fl, fr, f2, f3, f4, nh));
         // if((int)(ros::Time::now().toSec())%2==0)
         
-        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-//        joint_setpoint_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh)[1]);
+//        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
+        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel nh));
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

@@ -121,3 +121,4 @@ So I will first check：
     + [] Ask for a meeting
     
 ### 3rd order function
++ First use the simple trajectory: P = 0, w = constant = 10 degree/s in x;

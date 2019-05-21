@@ -26,7 +26,7 @@ void JointStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
   angle2 = _msg->position[1];
   state_pre[5] = angle1;
   state_pre[6] = angle2;
-  std::cout << "JointStateCallBack over" << std::endl;
+//  std::cout << "JointStateCallBack over" << std::endl;
 
 }
 
@@ -46,7 +46,7 @@ void JointStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
      state_vel[3] = _msg->twist.twist.angular.x;
      state_vel[4] = _msg->twist.twist.angular.y;
      state_vel[5] = _msg->twist.twist.angular.z;
-     std::cout << "BodyStateCallBack over" << std::endl;
+//     std::cout << "BodyStateCallBack over" << std::endl;
  }
 
 
@@ -62,7 +62,7 @@ void ThrusterStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
   state_pre[2] = f2;
   state_pre[3] = f3;
   state_pre[4] = f4;
-  std::cout << "ThrusterStateCallBack over" << std::endl;
+//  std::cout << "ThrusterStateCallBack over" << std::endl;
 }
 
 int main(int argc, char ** argv)

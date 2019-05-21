@@ -541,12 +541,14 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
    Eigen::Matrix<float, 3, 1> r, w, dw, ddw;
    Eigen::Matrix<float, 6, 1> acc_2nd, extra_f;
 
+   // matrix initialization
+    tor2acc = Eigen::Matrix<float, 6, 6>::Zero();
+    f_angle_3rd = f_angle_2nd = state = Eigen::Matrix<float, 7, 1>::Zero();
+    pose_2nd = pose_3rd = acc_2nd = extra_f = Eigen::Matrix<float, 6, 1>::Zero();
+    map2tor_3rd = map2tor_2nd = Eigen::Matrix<float, 6, 7>::Zero();
+    pd = dpd = ddpd = dddpd = rd = wd = dwd = ddwd = p = dp = ddp = dddp = r = w = dw = ddw = Eigen::Matrix<float, 3, 1>::Zero();
 
-   float m = 25.0;
-   Eigen::Matrix3f kp1, kp2, kp3, kw1, kw2, kw3;
-
-   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f::Zero(), Eigen::Matrix3f::Zero(), inertia;
-
+    float m = 25.0;
     double body_length, body_radius, tr2, tr1, tl1;
     body_length = 1.5;
     body_radius = 0.13;
@@ -560,6 +562,15 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     ly2 = -(body_radius+tr2);
     lx4 = -0.3*body_length;
     lx5 = 0.3*body_length;
+
+   Eigen::Matrix3f kp1, kp2, kp3, kw1, kw2, kw3;
+
+   inertia(0,0) = m*(body_radius*body_radius/4+body_length*body_length/12);
+   inertia(1,1) = m*(body_radius*body_radius/4+body_length*body_length/12);
+   inertia(2,2) = m*body_radius*body_radius/2;
+   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f::Zero(), Eigen::Matrix3f::Zero(), inertia;
+//    std::cout << "tor2acc is \n" << tor2acc << std::endl;
+
 
     Aeq[0][0] = cos(state_pre[5]);
     Aeq[2][0] = -sin(state_pre[5]);
@@ -596,45 +607,43 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     for(int i = 0; i < 6 ; i++)
         for(int j =0; j < 7; j++)
             map2tor_3rd(i,j) = float(Aeq[i][j]);
-    std::cout << " 1 " << std::endl;
+//    std::cout << " 1 " << std::endl;
 
     for(int i = 0; i < 6; i++)
         for(int j = 0; j < 5; j++)
             map2tor_2nd(i,j) = map2tor_3rd(i,j);
-    std::cout << " 2 " << std::endl;
+//    std::cout << " 2 " << std::endl;
     // need to call to master to get the f_angle_2nd
-    std::cout << " 3 " << std::endl;
+//    std::cout << " 3 " << std::endl;
     pose_2nd = tor2acc * map2tor_2nd * f_angle_2nd;
 
     //init state
-    for(int i = 0; i < p.size(); i++)
-    {
-        p << state_poi[i];
-        r << state_poi[i+3];
+    for(int i = 0; i < p.size(); i++) {
+        p(i) = state_poi[i];
+        r(i) = state_poi[i+3];
     }
-//    p << state_poi[0], state_poi[1], state_poi[2];
-    std::cout << " 4 " << std::endl;
-    for(int i =0; i < dp.size(); i++)
-    {
-        dp << state_vel[i];
-        w << state_vel[i+3];
+//    std::cout << " 4 " << std::endl;
+    //init velocity
+    for(int i = 0; i < dp.size(); i++) {
+        dp(i) = state_vel[i];
+        w(i) = state_vel[i+3];
     }
-    std::cout << " 5 " << std::endl;
+//    std::cout << " 5 " << std::endl;
     //the desired trajectory
-    wd << 10.0 / 180.0 * 3.14, 0, 0;
-    rd << wd * ros::Time::now().toSec(), 0, 0;
+    wd(0) = 2.0 / 180.0 * 3.14;
+    rd = wd * ros::Time::now().toSec();
     //calculate the 2nd derivative value
-    extra_f << 0, 0, -m * 9.8 + m * 9.8 * 1.01;
-    for(int i =0; i < state.size() - 2; i++)
-        state << state_pre[i];
-    std::cout << " 6 " << std::endl;
+    extra_f(2) = -m * 9.8 + m * 9.8 * 1.01;
+    for(int i = 0; i < state_pre.size()-2; i++)
+        state(i) = state_pre[i];
+    //    std::cout << " 6 " << std::endl;
     acc_2nd = tor2acc * map2tor_2nd * state + extra_f;
     for(int i =0; i < acc_2nd.size() - 3; i++)
     {
         ddp(i) = acc_2nd(i);
         dw(i) = acc_2nd(i+3);
     }
-    std::cout << " 7 " << std::endl;
+//    std::cout << " 7 " << std::endl;
     //setup kp and kw
     kp1 = kw1 = 7.5 * Eigen::Matrix3f::Identity();
     kp2 = kw2 = 18.75 * Eigen::Matrix3f::Identity();
@@ -644,13 +653,17 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd - w) + kw3 * (rd - r);
     pose_3rd << dddp, ddw;
 
-    Eigen::Matrix<float, 7, 6> map2tor_3rd_inv;
     vpMatrix Aeq_inv = Aeq.pseudoInverse();
-    for(int i = 0; i < Aeq_inv.getCols(); i++)
-        for(int j =0; j < Aeq_inv.getRows(); j++)
-            map2tor_3rd_inv << Aeq.pseudoInverse()[i][j];
-
+    Eigen::Matrix<float, 7, 6> map2tor_3rd_inv;
+    for(int i = 0; i < Aeq_inv.getRows(); i++)
+        for(int j =0; j < Aeq_inv.getCols(); j++)
+            map2tor_3rd_inv(i,j) = Aeq.pseudoInverse()[i][j];
+//    std::cout << "the map2tor_3rd_inv is \n" << map2tor_3rd_inv << std::endl;
+//    std::cout << "the tor2acc.inverse() is \n" << tor2acc.inverse() << std::endl;
+//    std::cout << "pose_3rd is \n" << pose_3rd << std::endl;
     f_angle_3rd = map2tor_3rd_inv * tor2acc.inverse() * pose_3rd;
+//    std::cout << "the results are \n" << f_angle_3rd << std::endl;
+
 
 // publish to joint setpoint and body setpoint both are in velocity
     sensor_msgs::JointState joint_msg;
@@ -664,13 +677,16 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     Joint_Command_Publisher = nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
     Joint_Command_Publisher.publish(joint_msg);
 
+
     sensor_msgs::JointState msg;
     msg.name = names;
     msg.effort.reserve(names.size());
 
-    for(int i = 0; i < f_angle_3rd.size()-2; i++)
-        msg.effort.push_back(f_angle_3rd(i)+state_pre[i]);
-
+    for(int i = 0; i < 5; i++) {
+        float effort = f_angle_3rd(i) + state_pre[i];
+//        std::cout << "effort is = " << effort << std::endl;
+        msg.effort.push_back(effort);
+    }
     return msg;
 
 

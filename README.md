@@ -110,17 +110,21 @@ So I will first check：
 ## To do the 3rd order derivative method:
 ### Planning May 20th
 + Time:
-    + Within 3 days: From 20th to 22th May
-        + [] Plan(1) 20th
-        + [] Plan(2) 21th
-        + [] Plan(3) 21th to 22th
+    + Within 3 days: From 20th to 22nd May
+        + [x] Plan(1) 20st
+        + [x] Plan(2) 21st
+        + [x] Plan(3) 21st
+        + [] Plan(4) 21st - 22th
 + Plan:
-    + [] Check the function again carefully and clearly.
-    + [] Copy another code file to do the implementation
-    + [] Test with the desired trajectory tracking.
-    + [] Ask for a meeting
+    + [x] Check the function again carefully and clearly.
+    + [x] Copy another code file to do the implementation
+    + [x] Test with the desired trajectory tracking.
+    + [] Find a better trajectory and fix the bugs
     
 ### 3rd order function May 20th
 + First use the simple trajectory: P = 0, w = constant = 10 degree/s in x;
 + Still have some bugs need to debug
-    + The initialize of Eigen Matrix has somewhere wrong.
+    + [x] The initialize of Eigen Matrix has somewhere wrong.  May 21th
+    + [x] Something wrong with the publisher of body efforts or the calculation results
+    + [x] Something wrong with the initialization of desired position and initializtion of matrix
+    + [] Move but still could not track the desired trajectory - may wrong in K or in desired trajectory

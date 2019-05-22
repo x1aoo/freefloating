@@ -128,3 +128,4 @@ So I will first check：
     + [x] Something wrong with the publisher of body efforts or the calculation results
     + [x] Something wrong with the initialization of desired position and initializtion of matrix
     + [] Move but still could not track the desired trajectory - may wrong in K or in desired trajectory
+    + [] Or the Initialization problem

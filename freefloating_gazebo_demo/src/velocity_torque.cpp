@@ -26,7 +26,6 @@ int main(int argc, char ** argv)
     // water current
     geometry_msgs::Vector3 current;
     current.y = .1;
-    // current.z= -25;
     ros::Publisher current_publisher = ros_node.advertise<geometry_msgs::Vector3>("/gazebo/current", 1);
     // ensure physics are running
     std_srvs::Empty srv;

@@ -129,3 +129,5 @@ So I will first check：
     + [x] Something wrong with the initialization of desired position and initializtion of matrix
     + [] Move but still could not track the desired trajectory - may wrong in K or in desired trajectory
     + [] Or the Initialization problem
+    + [x] joint velocity no effect and turn to the position setpoint method
+    + [] body command no effect 

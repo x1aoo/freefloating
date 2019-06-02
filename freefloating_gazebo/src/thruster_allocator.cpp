@@ -645,9 +645,12 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     }
 //    std::cout << " 7 " << std::endl;
     //setup kp and kw
-    kp1 = kw1 = 7.5 * Eigen::Matrix3f::Identity();
-    kp2 = kw2 = 18.75 * Eigen::Matrix3f::Identity();
-    kp3 = kw3 = 15.62 * Eigen::Matrix3f::Identity();
+//    kp1 = kw1 = 7.5 * Eigen::Matrix3f::Identity();
+//    kp2 = kw2 = 18.75 * Eigen::Matrix3f::Identity();
+//    kp3 = kw3 = 15.62 * Eigen::Matrix3f::Identity();
+    kp1 = kw1 = 1 * Eigen::Matrix3f::Identity();
+    kp2 = kw2 = 1 * Eigen::Matrix3f::Identity();
+    kp3 = kw3 = 1 * Eigen::Matrix3f::Identity();
     //PID-like function
     dddp = dddpd + kp1 * (ddpd - ddp) + kp2 * (dpd - dp) + kp3 * (pd - p);
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd - w) + kw3 * (rd - r);
@@ -670,8 +673,8 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 
     joint_msg.name.push_back("fwd_left");
     joint_msg.name.push_back("fwd_right");
-    joint_msg.velocity.push_back(f_angle_3rd(5));
-    joint_msg.velocity.push_back(f_angle_3rd(6));
+    joint_msg.position.push_back(f_angle_3rd(5) + state_pre[5]);
+    joint_msg.position.push_back(f_angle_3rd(6) + state_pre[6]);
 
     ros::Publisher Joint_Command_Publisher;
     Joint_Command_Publisher = nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
@@ -683,7 +686,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     msg.effort.reserve(names.size());
 
     for(int i = 0; i < 5; i++) {
-        float effort = f_angle_3rd(i) + state_pre[i];
+        float effort = f_angle_3rd(i) + state(i);
 //        std::cout << "effort is = " << effort << std::endl;
         msg.effort.push_back(effort);
     }

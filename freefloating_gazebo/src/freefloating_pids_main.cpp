@@ -129,8 +129,8 @@ int main(int argc, char ** argv)
   //check if we need to control joint,in our case, we need to control joints
   if(control_joints)
   {
-//    default_mode = "position";//the body control and the joint control may different
-      default_mode = "velocity";
+    default_mode = "position";//the body control and the joint control may different
+//      default_mode = "velocity";
     if(priv.hasParam("joint_control"))
       priv.getParam("joint_control", default_mode);
 

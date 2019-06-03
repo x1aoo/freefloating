@@ -630,7 +630,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     }
 //    std::cout << " 5 " << std::endl;
     //the desired trajectory
-    wd(0) = 2.0 / 180.0 * 3.14;
+    wd(0) = 1.0 / 180.0 * 3.14;
     rd = wd * ros::Time::now().toSec();
     //calculate the 2nd derivative value
     extra_f(2) = -m * 9.8 + m * 9.8 * 1.01;
@@ -644,13 +644,14 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
         dw(i) = acc_2nd(i+3);
     }
 //    std::cout << " 7 " << std::endl;
-    //setup kp and kw
+    //setup kp and kw (tiled uav gains)
 //    kp1 = kw1 = 7.5 * Eigen::Matrix3f::Identity();
 //    kp2 = kw2 = 18.75 * Eigen::Matrix3f::Identity();
 //    kp3 = kw3 = 15.62 * Eigen::Matrix3f::Identity();
-    kp1 = kw1 = 1 * Eigen::Matrix3f::Identity();
-    kp2 = kw2 = 1 * Eigen::Matrix3f::Identity();
-    kp3 = kw3 = 1 * Eigen::Matrix3f::Identity();
+    // turning gains
+    kp1 = kw1 = 0 * Eigen::Matrix3f::Identity();
+    kp2 = kw2 = 0 * Eigen::Matrix3f::Identity();
+    kp3 = kw3 = 10 * Eigen::Matrix3f::Identity();
     //PID-like function
     dddp = dddpd + kp1 * (ddpd - ddp) + kp2 * (dpd - dp) + kp3 * (pd - p);
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd - w) + kw3 * (rd - r);
@@ -689,6 +690,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
         float effort = f_angle_3rd(i) + state(i);
 //        std::cout << "effort is = " << effort << std::endl;
         msg.effort.push_back(effort);
+        std::cout << "effort " << i << " is " << effort << std::endl;
     }
     return msg;
 

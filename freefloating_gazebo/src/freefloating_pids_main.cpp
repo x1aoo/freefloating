@@ -4,6 +4,10 @@
 #include <memory>
 #include <visp/vpFeaturePoint.h>
 #include </home/x1ao/master/master_thesis_auv/ros_auv/src/freefloating_gazebo/src/matplotlibcpp.h>
+//dynamic reconfigure
+#include <ros/ros.h>
+#include <dynamic_reconfigure/server.h>
+#include <dynamic_tutorials/TutorialsConfig.h>
 
 using std::cout;
 using std::endl;
@@ -16,6 +20,17 @@ std::vector<double>v_x, v_y, v_z, roll, pitch, yaw;
 // double test;
 namespace plt = matplotlibcpp;
 // iter = 0;
+
+
+void callback(dynamic_tutorials::TutorialsConfig &config, uint32_t level) {
+    ROS_INFO("Reconfigure Request: %f %f %f %d",
+             config.kpdd, config.kpd, config.kp,
+             config.size);
+}
+
+
+
+
 
 void JointStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
 {
@@ -72,6 +87,17 @@ int main(int argc, char ** argv)
   ros::NodeHandle nh;
   ros::NodeHandle control_node(nh, "controllers");//specify a namespace to the constructor, in the the rosservier would have a ../controlelrs/ as a name space
   ros::NodeHandle priv("~");
+
+    dynamic_reconfigure::Server<dynamic_tutorials::TutorialsConfig> server;
+    dynamic_reconfigure::Server<dynamic_tutorials::TutorialsConfig>::CallbackType f;
+
+    f = boost::bind(&callback, _1, _2);
+    server.setCallback(f);
+
+    ROS_INFO("Spinning node");
+
+
+
 
   ffg::ThrusterAllocator allocator(nh);//create the NodeHandle named allocator and will parser all the information needed
 

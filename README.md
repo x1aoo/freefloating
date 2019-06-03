@@ -131,3 +131,7 @@ So I will first check：
     + [] Or the Initialization problem
     + [x] joint velocity no effect and turn to the position setpoint method
     + [] body command no effect 
+        + [] Why joint_command is published to /gazebo but thruster_command is to pid_control?
+        
+    + [] Try to use the dynamic reconfigure to turn the parameter(Kp)
+        + [] After changing the name, I met bugs of "has no member named ‘kpdd’"

@@ -25,6 +25,7 @@ if(gazebo_FOUND)
     rostime
     nav_msgs
     message_generation
+    dynamic_reconfigure
     )
 else()
 find_package(catkin REQUIRED COMPONENTS
@@ -65,6 +66,14 @@ generate_messages(
   DEPENDENCIES
   std_msgs
 )
+
+#add dynamic reconfigure api
+generate_dynamic_reconfigure_options(
+  cfg/kp.cfg
+  #...
+)
+
+
 
 catkin_package(
  INCLUDE_DIRS include ${EIGEN3_INCLUDE_DIRS}
@@ -113,6 +122,8 @@ add_executable(pid_control src/freefloating_pids_main.cpp
 target_link_libraries(pid_control ${catkin_LIBRARIES} ${PROJECT_NAME} ${PYTHON_LIBRARIES} ${ecn_common_INCLUDE_DIRS})
 add_dependencies(pid_control ${${PROJECT_NAME}_EXPORTED_TARGETS})
 add_dependencies(pid_control freefloating_gazebo_gencpp)
+#dynamic reconfigure
+add_dependencies(pid_control ${PROJECT_NAME}_gencfg)
 
 
 if(gazebo_FOUND)

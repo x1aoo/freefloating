@@ -39,6 +39,7 @@ find_package(catkin REQUIRED COMPONENTS
   rostime
   nav_msgs
   message_generation
+  dynamic_reconfigure
 )
 endif()
 

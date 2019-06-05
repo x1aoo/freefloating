@@ -14,6 +14,7 @@ using std::endl;
 vpColVector state_pre(7);
 vpColVector state_posi(8);
 vpColVector state_vel(8);
+double kp3_gains;
 
 double angle1, angle2, fl, fr, f2, f3, f4;
 std::vector<double>v_x, v_y, v_z, roll, pitch, yaw;
@@ -23,9 +24,12 @@ namespace plt = matplotlibcpp;
 
 
 void callback(dynamic_tutorials::TutorialsConfig &config, uint32_t level) {
-    ROS_INFO("Reconfigure Request: %f %f %f %d",
-             config.kpdd, config.kpd, config.kp,
+    ROS_INFO("Reconfigure Request: %d %f %s %s %d",
+             config.int_param, config.double_param,
+             config.str_param.c_str(),
+             config.bool_param?"True":"False",
              config.size);
+    kp3_gains = double(config.int_param) + config.double_param;
 }
 
 
@@ -192,7 +196,7 @@ int main(int argc, char ** argv)
         // if((int)(ros::Time::now().toSec())%2==0)
         
 //        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh));
+        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, kp3_gains));
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

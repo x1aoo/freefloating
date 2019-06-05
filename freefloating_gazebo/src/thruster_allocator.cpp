@@ -526,7 +526,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
 
 
-sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh) const
+sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, double kp3_gain) const
 {
    vpMatrix Aeq(6,7);
    Eigen::Matrix<float, 6, 6> tor2acc;
@@ -568,7 +568,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
    inertia(0,0) = m*(body_radius*body_radius/4+body_length*body_length/12);
    inertia(1,1) = m*(body_radius*body_radius/4+body_length*body_length/12);
    inertia(2,2) = m*body_radius*body_radius/2;
-   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f::Zero(), Eigen::Matrix3f::Zero(), inertia;
+   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f::Zero(), Eigen::Matrix3f::Zero(), inertia.inverse();
 //    std::cout << "tor2acc is \n" << tor2acc << std::endl;
 
 
@@ -630,7 +630,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     }
 //    std::cout << " 5 " << std::endl;
     //the desired trajectory
-    wd(0) = 1.0 / 180.0 * 3.14;
+    wd(0) = 10.0 / 180.0 * 3.14;
     rd = wd * ros::Time::now().toSec();
     //calculate the 2nd derivative value
     extra_f(2) = -m * 9.8 + m * 9.8 * 1.01;
@@ -651,7 +651,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     // turning gains
     kp1 = kw1 = 0 * Eigen::Matrix3f::Identity();
     kp2 = kw2 = 0 * Eigen::Matrix3f::Identity();
-    kp3 = kw3 = 10 * Eigen::Matrix3f::Identity();
+    kp3 = kw3 = kp3_gain * Eigen::Matrix3f::Identity();
     //PID-like function
     dddp = dddpd + kp1 * (ddpd - ddp) + kp2 * (dpd - dp) + kp3 * (pd - p);
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd - w) + kw3 * (rd - r);
@@ -690,7 +690,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
         float effort = f_angle_3rd(i) + state(i);
 //        std::cout << "effort is = " << effort << std::endl;
         msg.effort.push_back(effort);
-        std::cout << "effort " << i << " is " << effort << std::endl;
+//        std::cout << "effort " << i << " is " << effort << std::endl;
     }
     return msg;
 

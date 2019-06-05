@@ -355,7 +355,7 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   s_v_x.push_back(vx);
   // s_v_y.push_back(y);
   // s_v_z.push_back(-0.02);
-  s_roll.push_back(v_roll);
+  s_roll.push_back(-0.8);
   // s_pitch.push_back(v_pitch);
   // s_yaw.push_back(0);
 

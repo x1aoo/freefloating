@@ -45,6 +45,8 @@ But what is the symbol of PID gains are correct? The stable begining(without des
 
 ### Turning PID gains: 17th May
 
++ [] Set all the gains in roll into 0 and check the plot of vx and roll, it means that we do not control the roll motion check the vx still has some noise or not?
+
 1. The method
     1. First, let Ki = Kd =0, and turning Kp from 0 to larger until the systems begin to oscillate. And then make the Kp become less until the oscillate disappear. The suitable Kp is this Kp value * 0.6
     2. Set a bigger Ki and make the value become less until the systems begin to oscillate. Then make the Ki become bigger until the oscillate disappear. The suitable Ki value should be this Ki value * 1.5
@@ -102,7 +104,7 @@ So I will first check：
         + After test, the systems could publish the angles correctly although we could not see clearly in rqt graph
         + The result still wrong and I do not know where gose wrong.        
 3. The potential method
-    + Use velocity control in joint control instead of position control
+    + [] Use velocity control in joint control instead of position control
         + If it works, to think about with velocity make it but position control
         + The f should not be 0 from the 3rd derivative function(Could we do not give the linear velocity in x axis)
 ### Next Step is to do the 3rd order derivative May 19th
@@ -134,4 +136,9 @@ So I will first check：
         + [] Why joint_command is published to /gazebo but thruster_command is to pid_control?
         
     + [] Try to use the dynamic reconfigure to turn the parameter(Kp)
-        + [] After changing the name, I met bugs of "has no member named ‘kpdd’"
+        + [x] After changing the name, I met bugs of "has no member named ‘kpdd’"
+        + [x] Finish the case that with fix variable name and ranges
+        + [] Try to change the name of variable and ranges
+        
+    + [] Check the desired angular variable state
+        + [] What the means of the each items of wd, rd and etc

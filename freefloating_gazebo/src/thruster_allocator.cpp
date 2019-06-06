@@ -5,6 +5,8 @@
 #include </home/x1ao/master/master_thesis_auv/ros_auv/src/freefloating_gazebo/src/matplotlibcpp.h>
 #include <Eigen/Dense>
 
+#include "sophus/so3.hpp"
+#include "sophus/se3.hpp"
 
 namespace plt = matplotlibcpp;
 
@@ -526,29 +528,29 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
 
 
-sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, double kp3_gain) const
+sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, double kp3_gain, Eigen::Matrix3d curR) const
 {
    vpMatrix Aeq(6,7);
-   Eigen::Matrix<float, 6, 6> tor2acc;
-   Eigen::Matrix<float, 7, 1> f_angle_3rd, f_angle_2nd, state;
-   Eigen::Matrix<float, 6, 1> pose_2nd, pose_3rd;
-   Eigen::Matrix3f inertia;
-   Eigen::Matrix<float, 6, 7> map2tor_3rd;
-   Eigen::Matrix<float, 6, 7> map2tor_2nd;
-   Eigen::Matrix<float, 3, 1> pd, dpd, ddpd, dddpd;
-   Eigen::Matrix<float, 3, 1> rd, wd, dwd, ddwd;
-   Eigen::Matrix<float, 3, 1> p, dp, ddp, dddp;
-   Eigen::Matrix<float, 3, 1> r, w, dw, ddw;
-   Eigen::Matrix<float, 6, 1> acc_2nd, extra_f;
+   Eigen::Matrix<double, 6, 6> tor2acc;
+   Eigen::Matrix<double, 7, 1> f_angle_3rd, f_angle_2nd, state;
+   Eigen::Matrix<double, 6, 1> pose_2nd, pose_3rd;
+   Eigen::Matrix3d inertia;
+   Eigen::Matrix<double, 6, 7> map2tor_3rd;
+   Eigen::Matrix<double, 6, 7> map2tor_2nd;
+   Eigen::Matrix<double, 3, 1> pd, dpd, ddpd, dddpd;
+   Eigen::Matrix<double, 3, 1> rd, wd, dwd, ddwd;
+   Eigen::Matrix<double, 3, 1> p, dp, ddp, dddp;
+   Eigen::Matrix<double, 3, 1> r, w, dw, ddw;
+   Eigen::Matrix<double, 6, 1> acc_2nd, extra_f;
 
    // matrix initialization
-    tor2acc = Eigen::Matrix<float, 6, 6>::Zero();
-    f_angle_3rd = f_angle_2nd = state = Eigen::Matrix<float, 7, 1>::Zero();
-    pose_2nd = pose_3rd = acc_2nd = extra_f = Eigen::Matrix<float, 6, 1>::Zero();
-    map2tor_3rd = map2tor_2nd = Eigen::Matrix<float, 6, 7>::Zero();
-    pd = dpd = ddpd = dddpd = rd = wd = dwd = ddwd = p = dp = ddp = dddp = r = w = dw = ddw = Eigen::Matrix<float, 3, 1>::Zero();
+    tor2acc = Eigen::Matrix<double, 6, 6>::Zero();
+    f_angle_3rd = f_angle_2nd = state = Eigen::Matrix<double, 7, 1>::Zero();
+    pose_2nd = pose_3rd = acc_2nd = extra_f = Eigen::Matrix<double, 6, 1>::Zero();
+    map2tor_3rd = map2tor_2nd = Eigen::Matrix<double, 6, 7>::Zero();
+    pd = dpd = ddpd = dddpd = rd = wd = dwd = ddwd = p = dp = ddp = dddp = r = w = dw = ddw = Eigen::Matrix<double, 3, 1>::Zero();
 
-    float m = 25.0;
+    double m = 25.0;
     double body_length, body_radius, tr2, tr1, tl1;
     body_length = 1.5;
     body_radius = 0.13;
@@ -563,12 +565,12 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     lx4 = -0.3*body_length;
     lx5 = 0.3*body_length;
 
-   Eigen::Matrix3f kp1, kp2, kp3, kw1, kw2, kw3;
+   Eigen::Matrix3d kp1, kp2, kp3, kw1, kw2, kw3;
 
    inertia(0,0) = m*(body_radius*body_radius/4+body_length*body_length/12);
    inertia(1,1) = m*(body_radius*body_radius/4+body_length*body_length/12);
    inertia(2,2) = m*body_radius*body_radius/2;
-   tor2acc << Eigen::Matrix3f::Identity() * 1/m, Eigen::Matrix3f::Zero(), Eigen::Matrix3f::Zero(), inertia.inverse();
+   tor2acc << Eigen::Matrix3d::Identity() * 1/m, Eigen::Matrix3d::Zero(), Eigen::Matrix3d::Zero(), inertia.inverse();
 //    std::cout << "tor2acc is \n" << tor2acc << std::endl;
 
 
@@ -606,7 +608,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 
     for(int i = 0; i < 6 ; i++)
         for(int j =0; j < 7; j++)
-            map2tor_3rd(i,j) = float(Aeq[i][j]);
+            map2tor_3rd(i,j) = double(Aeq[i][j]);
 //    std::cout << " 1 " << std::endl;
 
     for(int i = 0; i < 6; i++)
@@ -620,7 +622,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     //init state
     for(int i = 0; i < p.size(); i++) {
         p(i) = state_poi[i];
-        r(i) = state_poi[i+3];
+//        r(i) = state_poi[i+3];
     }
 //    std::cout << " 4 " << std::endl;
     //init velocity
@@ -630,8 +632,44 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     }
 //    std::cout << " 5 " << std::endl;
     //the desired trajectory
-    wd(0) = 10.0 / 180.0 * 3.14;
+    wd(0) = 5.0 / 180.0 * 3.14;
     rd = wd * ros::Time::now().toSec();
+
+//    std::cout << "rd is \n" << rd << std::endl;
+
+    //from euler angles to rotation matrix - desired
+    Eigen::AngleAxisd rollAngle(rd(0), Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd yawAngle(rd(2), Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd pitchAngle(rd(1), Eigen::Vector3d::UnitX());
+    Eigen::Quaternion<double> q = rollAngle * yawAngle * pitchAngle;
+    Eigen::Matrix3d Rd = q.matrix();
+    //dRd
+    Eigen::AngleAxisd vrollAngle(wd(0), Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd vyawAngle(wd(2), Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd vpitchAngle(wd(1), Eigen::Vector3d::UnitX());
+    Eigen::Quaternion<double> qv = vrollAngle * vyawAngle * vpitchAngle;
+    Eigen::Matrix3d dRd = qv.matrix();
+
+    //Lee - Rwd
+    Eigen::Matrix3d Rwd = Rd.transpose() * dRd;
+    Sophus::SO3 SO3Rwd(Rwd);
+    Eigen::Vector3d wd_so3 = SO3Rwd.log();
+
+    //Lee - eR
+//    Eigen::AngleAxisd currollAngle(r(0), Eigen::Vector3d::UnitZ());
+//    Eigen::AngleAxisd curyawAngle(r(1), Eigen::Vector3d::UnitY());
+//    Eigen::AngleAxisd curpitchAngle(r(2), Eigen::Vector3d::UnitX());
+//    Eigen::Quaternion<double> curq = currollAngle * curyawAngle * curpitchAngle;
+//    Eigen::Matrix3d curR = curq.matrix();
+
+    Eigen::Matrix3d Rer = Rd.inverse() * curR ;
+
+//    std::cout << "Rer is \n" << Rer << std::endl;
+    Sophus::SO3 SO3Rer(Rer);
+    Eigen::Vector3d er_so3 = SO3Rer.log();
+
+//    std::cout << "er_so3 is " << er_so3 << std::endl;
+
     //calculate the 2nd derivative value
     extra_f(2) = -m * 9.8 + m * 9.8 * 1.01;
     for(int i = 0; i < state_pre.size()-2; i++)
@@ -643,22 +681,35 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
         ddp(i) = acc_2nd(i);
         dw(i) = acc_2nd(i+3);
     }
+    //calculate the w
+    Eigen::AngleAxisd v0rollAngle(w(0), Eigen::Vector3d::UnitZ());
+    Eigen::AngleAxisd v0yawAngle(w(2), Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd v0pitchAngle(w(1), Eigen::Vector3d::UnitX());
+    Eigen::Quaternion<double> qv0 = v0rollAngle * v0yawAngle * v0pitchAngle;
+    Eigen::Matrix3d dR = qv0.matrix();
+
+    Eigen::Matrix3d Rdr = curR.transpose() * dR;
+    Sophus::SO3 SO3Rdr(Rdr);
+    Eigen::Vector3d wBso3 = SO3Rdr.log();
+
+
 //    std::cout << " 7 " << std::endl;
     //setup kp and kw (tiled uav gains)
 //    kp1 = kw1 = 7.5 * Eigen::Matrix3f::Identity();
 //    kp2 = kw2 = 18.75 * Eigen::Matrix3f::Identity();
 //    kp3 = kw3 = 15.62 * Eigen::Matrix3f::Identity();
     // turning gains
-    kp1 = kw1 = 0 * Eigen::Matrix3f::Identity();
-    kp2 = kw2 = 0 * Eigen::Matrix3f::Identity();
-    kp3 = kw3 = kp3_gain * Eigen::Matrix3f::Identity();
+    kp1 = kw1 = 0 * Eigen::Matrix3d::Identity();
+    kp3 = kp2 = kw2 = 0 * Eigen::Matrix3d::Identity();
+    kw2 = kp3_gain * Eigen::Matrix3d::Identity();
+    kw3 = 5 * Eigen::Matrix3d::Identity();
     //PID-like function
     dddp = dddpd + kp1 * (ddpd - ddp) + kp2 * (dpd - dp) + kp3 * (pd - p);
-    ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd - w) + kw3 * (rd - r);
+    ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd_so3 - wBso3) + kw3 * er_so3;
     pose_3rd << dddp, ddw;
 
     vpMatrix Aeq_inv = Aeq.pseudoInverse();
-    Eigen::Matrix<float, 7, 6> map2tor_3rd_inv;
+    Eigen::Matrix<double, 7, 6> map2tor_3rd_inv;
     for(int i = 0; i < Aeq_inv.getRows(); i++)
         for(int j =0; j < Aeq_inv.getCols(); j++)
             map2tor_3rd_inv(i,j) = Aeq.pseudoInverse()[i][j];
@@ -687,7 +738,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     msg.effort.reserve(names.size());
 
     for(int i = 0; i < 5; i++) {
-        float effort = f_angle_3rd(i) + state(i);
+        double effort = f_angle_3rd(i) + state(i);
 //        std::cout << "effort is = " << effort << std::endl;
         msg.effort.push_back(effort);
 //        std::cout << "effort " << i << " is " << effort << std::endl;

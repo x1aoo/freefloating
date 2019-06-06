@@ -8,13 +8,15 @@
 #include <ros/ros.h>
 #include <dynamic_reconfigure/server.h>
 #include <dynamic_tutorials/TutorialsConfig.h>
+#include <Eigen/Dense>
 
 using std::cout;
 using std::endl;
 vpColVector state_pre(7);
-vpColVector state_posi(8);
+vpColVector state_posi(3);
 vpColVector state_vel(8);
 double kp3_gains;
+Eigen::Matrix3d curR;
 
 double angle1, angle2, fl, fr, f2, f3, f4;
 std::vector<double>v_x, v_y, v_z, roll, pitch, yaw;
@@ -55,9 +57,15 @@ void JointStateCallBack(const sensor_msgs::JointStateConstPtr &_msg)
      state_posi[0] = _msg->pose.pose.position.x;
      state_posi[1] = _msg->pose.pose.position.y;
      state_posi[2] = _msg->pose.pose.position.z;
-     state_posi[3] = _msg->pose.pose.orientation.x/_msg->pose.pose.orientation.w;
-     state_posi[4] = _msg->pose.pose.orientation.y/_msg->pose.pose.orientation.w;
-     state_posi[5] = _msg->pose.pose.orientation.z/_msg->pose.pose.orientation.w;
+     //std wrong here, should pass the rotation matrix directly
+//     state_posi[3] = _msg->pose.pose.orientation.x/_msg->pose.pose.orientation.w;
+//     state_posi[4] = _msg->pose.pose.orientation.y/_msg->pose.pose.orientation.w;
+//     state_posi[5] = _msg->pose.pose.orientation.z/_msg->pose.pose.orientation.w;
+
+     Eigen::Quaternion<double> curq(_msg->pose.pose.orientation.w,_msg->pose.pose.orientation.x,_msg->pose.pose.orientation.y,_msg->pose.pose.orientation.z);
+     curR = curq.matrix();
+
+//     std::cout << "curR is \n" << curR << std::endl;
 
      state_vel[0] = _msg->twist.twist.linear.x;
      state_vel[1] = _msg->twist.twist.linear.y;
@@ -196,7 +204,7 @@ int main(int argc, char ** argv)
         // if((int)(ros::Time::now().toSec())%2==0)
         
 //        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, kp3_gains));
+        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, kp3_gains, curR));
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

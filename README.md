@@ -141,4 +141,8 @@ So I will first check：
         + [] Try to change the name of variable and ranges
         
     + [] Check the desired angular variable state
-        + [] What the means of the each items of wd, rd and etc
+        + [x] What the means of the each items of wd, rd and etc
+            + [x] The terms of angular are respected to the matrix square
+            + [x] The terms of eR is the rotation vector of rotation matrix
+            + [] The eR is different from the paper one
+            + [] The wd w are need to check

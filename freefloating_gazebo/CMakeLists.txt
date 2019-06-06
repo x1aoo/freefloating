@@ -6,6 +6,9 @@ set(CMAKE_BUILD_TYPE Debug)
 find_package(PythonLibs REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 
+find_package(Sophus REQUIRED)
+include_directories(${Sophus_INCLUDE_DIRS})
+
 find_package(VISP REQUIRED)
 
 find_package(ecn_common)
@@ -109,7 +112,7 @@ add_library(freefloating_gazebo
 #to do the qp solver
 #include/freefloating_gazebo/optim.h src/optim.cpp
   )
-target_link_libraries(freefloating_gazebo ${catkin_LIBRARIES} ${VISP_LIBRARIES} ${PYTHON_LIBRARIES} ${ecn_common_INCLUDE_DIRS})
+target_link_libraries(freefloating_gazebo ${catkin_LIBRARIES} ${VISP_LIBRARIES} ${PYTHON_LIBRARIES} ${ecn_common_INCLUDE_DIRS} ${Sophus_INCLUDE_DIRS})
 
 
 

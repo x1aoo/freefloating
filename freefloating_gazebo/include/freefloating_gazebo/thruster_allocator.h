@@ -46,7 +46,7 @@ public:
   sensor_msgs::JointState wrench2Thrusters(const geometry_msgs::Wrench  & cmd, double angle1, double angle2, double fl, double fr, double f2, double f3, double f4, ros::NodeHandle &nh) const;
 //  std::vector<sensor_msgs::JointState> wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
     sensor_msgs::JointState wrench2Thrusters_iterative(const geometry_msgs::Wrench  & cmd, vpColVector state_pre, ros::NodeHandle &nh) const;
-    sensor_msgs::JointState wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, double kp3_gain) const;
+    sensor_msgs::JointState wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, double kp3_gain, Eigen::Matrix3d curR) const;
 
 
     ffg::HydroLink base_link;

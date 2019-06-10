@@ -528,7 +528,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
 
 
-sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, double kp3_gain, Eigen::Matrix3d curR) const
+sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_msgs::Wrench &cmd, vpColVector state_pre, vpColVector state_poi, vpColVector state_vel, ros::NodeHandle &nh, std::vector<double> gains, Eigen::Matrix3d curR) const
 {
    vpMatrix Aeq(6,7);
    Eigen::Matrix<double, 6, 6> tor2acc;
@@ -662,8 +662,8 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 //    Eigen::Quaternion<double> curq = currollAngle * curyawAngle * curpitchAngle;
 //    Eigen::Matrix3d curR = curq.matrix();
 
-    Eigen::Matrix3d Rer = Rd.inverse() * curR ;
-
+    Eigen::Matrix3d Rer = 1/2 * (curR.transpose() * Rd - Rd.transpose() * curR);
+//    Eigen::Matrix3d Rer = curR.transpose() * Rd;
 //    std::cout << "Rer is \n" << Rer << std::endl;
     Sophus::SO3 SO3Rer(Rer);
     Eigen::Vector3d er_so3 = SO3Rer.log();
@@ -699,10 +699,12 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 //    kp2 = kw2 = 18.75 * Eigen::Matrix3f::Identity();
 //    kp3 = kw3 = 15.62 * Eigen::Matrix3f::Identity();
     // turning gains
-    kp1 = kw1 = 0 * Eigen::Matrix3d::Identity();
-    kp3 = kp2 = kw2 = 0 * Eigen::Matrix3d::Identity();
-    kw2 = kp3_gain * Eigen::Matrix3d::Identity();
-    kw3 = 5 * Eigen::Matrix3d::Identity();
+    kp1 = gains[0] * Eigen::Matrix3d::Identity();
+    kp2 = gains[1] * Eigen::Matrix3d::Identity();
+    kp3 = gains[2] * Eigen::Matrix3d::Identity();
+    kw1 = gains[3] * Eigen::Matrix3d::Identity();
+    kw2 = gains[4] * Eigen::Matrix3d::Identity();
+    kw3 = gains[5] * Eigen::Matrix3d::Identity();
     //PID-like function
     dddp = dddpd + kp1 * (ddpd - ddp) + kp2 * (dpd - dp) + kp3 * (pd - p);
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd_so3 - wBso3) + kw3 * er_so3;

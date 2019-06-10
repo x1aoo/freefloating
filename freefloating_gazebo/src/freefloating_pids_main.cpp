@@ -15,7 +15,8 @@ using std::endl;
 vpColVector state_pre(7);
 vpColVector state_posi(3);
 vpColVector state_vel(8);
-double kp3_gains;
+std::vector<double>gains;
+//double kp1_gains, kp2_gains, kp3_gains, kw1_gains, kw2_gains, kw3_gains;
 Eigen::Matrix3d curR;
 
 double angle1, angle2, fl, fr, f2, f3, f4;
@@ -26,12 +27,25 @@ namespace plt = matplotlibcpp;
 
 
 void callback(dynamic_tutorials::TutorialsConfig &config, uint32_t level) {
-    ROS_INFO("Reconfigure Request: %d %f %s %s %d",
-             config.int_param, config.double_param,
-             config.str_param.c_str(),
-             config.bool_param?"True":"False",
-             config.size);
-    kp3_gains = double(config.int_param) + config.double_param;
+    ROS_INFO("Reconfigure Request: %d %d %d %d %d %d",
+             config.kp1, config.kp2,
+             config.kp3,
+             config.kw1, config.kw2,
+             config.kw3);
+    std::vector<double> gains_inloop;
+    gains_inloop.push_back(config.kp1);
+    gains_inloop.push_back(config.kp2);
+    gains_inloop.push_back(config.kp3);
+    gains_inloop.push_back(config.kw1);
+    gains_inloop.push_back(config.kw2);
+    gains_inloop.push_back(config.kw3);
+    gains = gains_inloop;
+//    kp1_gains = config.kp1;
+//    kp2_gains = config.kp2;
+//    kp3_gains = config.kp3;
+//    kw1_gains = config.kw1;
+//    kw2_gains = config.kw2;
+//    kw3_gains = config.kw3;
 }
 
 
@@ -204,7 +218,7 @@ int main(int argc, char ** argv)
         // if((int)(ros::Time::now().toSec())%2==0)
         
 //        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, kp3_gains, curR));
+        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, gains, curR));
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

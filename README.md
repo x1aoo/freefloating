@@ -135,14 +135,14 @@ So I will first check：
     + [] body command no effect 
         + [] Why joint_command is published to /gazebo but thruster_command is to pid_control?
         
-    + [] Try to use the dynamic reconfigure to turn the parameter(Kp)
+    + [x] Try to use the dynamic reconfigure to turn the parameter(Kp)
         + [x] After changing the name, I met bugs of "has no member named ‘kpdd’"
         + [x] Finish the case that with fix variable name and ranges
-        + [] Try to change the name of variable and ranges
+        + [x] Try to change the name of variable and ranges
         
-    + [] Check the desired angular variable state
+    + [x] Check the desired angular variable state
         + [x] What the means of the each items of wd, rd and etc
             + [x] The terms of angular are respected to the matrix square
             + [x] The terms of eR is the rotation vector of rotation matrix
-            + [] The eR is different from the paper one
-            + [] The wd w are need to check
+            + [x] The eR is different from the paper one
+            + [x] The wd w are need to check

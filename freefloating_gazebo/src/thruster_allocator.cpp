@@ -671,7 +671,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 //    std::cout << "er_so3 is " << er_so3 << std::endl;
 
     //calculate the 2nd derivative value
-    extra_f(2) = -m * 9.8 + m * 9.8 * 1.01;
+    extra_f(2) = 9.8 * 0.01;
     for(int i = 0; i < state_pre.size()-2; i++)
         state(i) = state_pre[i];
     //    std::cout << " 6 " << std::endl;

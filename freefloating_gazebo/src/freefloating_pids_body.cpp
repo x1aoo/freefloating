@@ -331,21 +331,11 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   double vy = 0;
   double vz = 0.1 * (z - cur_depth);
   double vx = 0.0;
-
-//  if(ros::Time::now().toSec()>=10 && ros::Time::now().toSec() <= 70)
-//    x = 0.05;
-
-
-// /vectored_auv/state/twist/twist/linear/x
-// /vectored_auv/state/twist/twist/angular/x
-
-
   double desird_roll = 0.5;
-//  double v_roll = 0.1 * (desird_roll - cur_roll) ;
   double v_roll = 0.1;
-
   double v_pitch = 0.0;
   double v_yaw = 0.0;
+
 //  roll.push_back(desird_roll);
 
 
@@ -361,7 +351,7 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
 
   time_sp.push_back(ros::Time::now().toSec());
   // to output the time
-  std::cout << ros::Time::now().toSec() << std::endl;
+//  std::cout << ros::Time::now().toSec() << std::endl;
 
   if(ros::Time::now().toSec()>= 30&& ros::Time::now().toSec()<=30.2)
   {

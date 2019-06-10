@@ -146,3 +146,20 @@ So I will first check：
             + [x] The terms of eR is the rotation vector of rotation matrix
             + [x] The eR is different from the paper one
             + [x] The wd w are need to check
+            
+    + [] When I plot both q/x and twist/x, it is seems that it could not represent the velocity and angle change, but Still have no idea so far to change.
+        + [x] the q/x is not relevant to the roll pitch yaw(need to transfer with the equations)
+        + [x] I assume the twist/linear/x is the differential of roll, but need to find a method to verify
+            + [] Try to find the code of freefloating with twist/linear/...
+                + [] Try to know more about gazebo but it's quite a lot things to know.
+            + [x] Try to find some scripts of nav_msgs::Odometry message.
+                + The twist/x is the represent roll motion.
+            
+    + [] Do not consider the effects of each thruster.
+        + [] Add the thrusters' effect in dynamic equations.
+    
+    + [] Tuning gains - use the PID method - after consider the effect and verify the twist/linear meaning
+        + [] The gains output is quite strange, need to check agagin
+        + [] First tuning kw2 - like the kp in pid
+        + [] Then tuning kw3 - like the ki in pid
+        + [] At last, tuning kw1 - like kd in pid

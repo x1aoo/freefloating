@@ -609,15 +609,16 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     for(int i = 0; i < 6 ; i++)
         for(int j =0; j < 7; j++)
             map2tor_3rd(i,j) = double(Aeq[i][j]);
-//    std::cout << " 1 " << std::endl;
+//    std::cout << " map2tor_3rd is \n " << map2tor_3rd << std::endl;
 
     for(int i = 0; i < 6; i++)
         for(int j = 0; j < 5; j++)
             map2tor_2nd(i,j) = map2tor_3rd(i,j);
-//    std::cout << " 2 " << std::endl;
+//    std::cout << " map2tor_2nd is \n " << map2tor_2nd << std::endl;
     // need to call to master to get the f_angle_2nd
-//    std::cout << " 3 " << std::endl;
     pose_2nd = tor2acc * map2tor_2nd * f_angle_2nd;
+
+
 
     //init state
     for(int i = 0; i < p.size(); i++) {
@@ -656,14 +657,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     Eigen::Vector3d wd_so3 = SO3Rwd.log();
 
     //Lee - eR
-//    Eigen::AngleAxisd currollAngle(r(0), Eigen::Vector3d::UnitZ());
-//    Eigen::AngleAxisd curyawAngle(r(1), Eigen::Vector3d::UnitY());
-//    Eigen::AngleAxisd curpitchAngle(r(2), Eigen::Vector3d::UnitX());
-//    Eigen::Quaternion<double> curq = currollAngle * curyawAngle * curpitchAngle;
-//    Eigen::Matrix3d curR = curq.matrix();
-
-    Eigen::Matrix3d Rer = 1/2 * (curR.transpose() * Rd - Rd.transpose() * curR);
-//    Eigen::Matrix3d Rer = curR.transpose() * Rd;
+    Eigen::Matrix3d Rer = curR.transpose() * Rd;
 //    std::cout << "Rer is \n" << Rer << std::endl;
     Sophus::SO3 SO3Rer(Rer);
     Eigen::Vector3d er_so3 = SO3Rer.log();
@@ -671,11 +665,14 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 //    std::cout << "er_so3 is " << er_so3 << std::endl;
 
     //calculate the 2nd derivative value
-    extra_f(2) = 9.8 * 0.01;
+    extra_f(2) = -9.8 * 0.01;
     for(int i = 0; i < state_pre.size()-2; i++)
         state(i) = state_pre[i];
     //    std::cout << " 6 " << std::endl;
     acc_2nd = tor2acc * map2tor_2nd * state + extra_f;
+    std::cout << "acc_2nd is \n" << acc_2nd << std::endl;
+    std::cout << "state is \n" << state << std::endl;
+    std::cout << "extra_f is \n" << extra_f << std::endl;
     for(int i =0; i < acc_2nd.size() - 3; i++)
     {
         ddp(i) = acc_2nd(i);

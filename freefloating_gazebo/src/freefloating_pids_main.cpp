@@ -34,11 +34,18 @@ void callback(dynamic_tutorials::TutorialsConfig &config, uint32_t level) {
              config.kw3);
     std::vector<double> gains_inloop;
     gains_inloop.push_back(config.kp1);
-    gains_inloop.push_back(config.kp2);
-    gains_inloop.push_back(config.kp3);
-    gains_inloop.push_back(config.kw1);
-    gains_inloop.push_back(config.kw2);
-    gains_inloop.push_back(config.kw3);
+//    double kp2 = 4 * sqrt(config.kp1);
+//    double kp3 = 4 * sqrt(kp2);
+    double kp2 = config.kp1 * config.kp1 / 3;
+    double kp3 = sqrt(config.kp1*config.kp1*sqrt(kp3));
+
+    gains_inloop.push_back(kp2);
+    gains_inloop.push_back(kp3);
+    gains_inloop.push_back(config.kp1);
+    double kw2 = 4 * sqrt(config.kw1);
+    double kw3 = 4 * sqrt(kw2);
+    gains_inloop.push_back(kp2);
+    gains_inloop.push_back(kp3);
     gains = gains_inloop;
 //    kp1_gains = config.kp1;
 //    kp2_gains = config.kp2;

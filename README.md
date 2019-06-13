@@ -156,6 +156,8 @@ So I will first check：
                 + The twist/x is the represent roll motion.
             
     + [] Do not consider the effects of each thruster.
+        + [] Check again the equations
+            + [] Some additional parts
         + [] Add the thrusters' effect in dynamic equations.
     
     + [] Tuning gains - use the PID method - after consider the effect and verify the twist/linear meaning
@@ -163,3 +165,5 @@ So I will first check：
         + [] First tuning kw2 - like the kp in pid
         + [] Then tuning kw3 - like the ki in pid
         + [] At last, tuning kw1 - like kd in pid
+        
+    +[] Should tune the gains at the same time 

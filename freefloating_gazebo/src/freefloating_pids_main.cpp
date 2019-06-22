@@ -27,32 +27,23 @@ namespace plt = matplotlibcpp;
 
 
 void callback(dynamic_tutorials::TutorialsConfig &config, uint32_t level) {
-    ROS_INFO("Reconfigure Request: %d %d %d %d %d %d",
-             config.kp1, config.kp2,
-             config.kp3,
-             config.kw1, config.kw2,
-             config.kw3);
+//    ROS_INFO("Reconfigure Request: %d %d",
+//             config.kp1,
+//             config.kw1);
     std::vector<double> gains_inloop;
     gains_inloop.push_back(config.kp1);
 //    double kp2 = 4 * sqrt(config.kp1);
 //    double kp3 = 4 * sqrt(kp2);
     double kp2 = config.kp1 * config.kp1 / 3;
     double kp3 = sqrt(config.kp1*config.kp1*sqrt(kp3));
-
     gains_inloop.push_back(kp2);
     gains_inloop.push_back(kp3);
-    gains_inloop.push_back(config.kp1);
+    gains_inloop.push_back(config.kw1);
     double kw2 = 4 * sqrt(config.kw1);
     double kw3 = 4 * sqrt(kw2);
-    gains_inloop.push_back(kp2);
-    gains_inloop.push_back(kp3);
+    gains_inloop.push_back(kw2);
+    gains_inloop.push_back(kw3);
     gains = gains_inloop;
-//    kp1_gains = config.kp1;
-//    kp2_gains = config.kp2;
-//    kp3_gains = config.kp3;
-//    kw1_gains = config.kw1;
-//    kw2_gains = config.kw2;
-//    kw3_gains = config.kw3;
 }
 
 

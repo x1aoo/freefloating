@@ -159,11 +159,19 @@ So I will first check：
         + [] Check again the equations
             + [] Some additional parts
         + [] Add the thrusters' effect in dynamic equations.
-    
-    + [] Tuning gains - use the PID method - after consider the effect and verify the twist/linear meaning
-        + [] The gains output is quite strange, need to check agagin
-        + [] First tuning kw2 - like the kp in pid
-        + [] Then tuning kw3 - like the ki in pid
-        + [] At last, tuning kw1 - like kd in pid
         
-    +[] Should tune the gains at the same time 
+    + [] Should tune the gains at the same time 
+        + [] by using the golden rule.
+        
+    + [] Should fix the bugs in rotation
+        + [x] Fix the errors in angular velocity.
+            + [] It is right?
+                + [] Should them transfer to the word frame?
+        + [x] Acc? No
+        + [] Rotation? 
+        + [] The problem is when I tuning the gains, it crashed
+    + [] Check the function again 
+        + [x] find errors in J(a) matrix
+        + [] Check the desired trajectory in body_pid
+        + [] Still need to check other function - Sunday
+    

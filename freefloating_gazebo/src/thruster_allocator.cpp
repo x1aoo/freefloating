@@ -324,38 +324,39 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
     // Aeq J(a,f)
     // std::cout << "angle1 is \n" << state_pre[5] << std::endl;
-    Aeq[0][0] = cos(state_pre[5]);
-    Aeq[2][0] = -sin(state_pre[5]);
-    Aeq[3][0] = -sin(state_pre[5]) * ly1;
-    Aeq[4][0] = sin(state_pre[5]) * lx1;
-    Aeq[5][0] = -cos(state_pre[5]) * ly1;
-    // std::cout << "cos(angle1) is " << Aeq[0][0] << std::endl;
+      Aeq[0][0] = cos(state_pre[5]);
+      Aeq[2][0] = sin(state_pre[5]);
+      Aeq[3][0] = sin(state_pre[5]) * ly1;
+      Aeq[4][0] = -sin(state_pre[5]) * lx1;
+      Aeq[5][0] = -cos(state_pre[5]) * ly1;
 
-    Aeq[0][1] = cos(state_pre[6]);
-    Aeq[2][1] = -sin(state_pre[6]);
-    Aeq[3][1] = -sin(state_pre[6]) * ly2;
-    Aeq[4][1] = sin(state_pre[6]) * lx2;
-    Aeq[5][1] = -cos(state_pre[6]) * ly2;
+      Aeq[0][1] = cos(state_pre[6]);
+      Aeq[2][1] = sin(state_pre[6]);
+      Aeq[3][1] = sin(state_pre[6]) * ly2;
+      Aeq[4][1] = -sin(state_pre[6]) * lx2;
+      Aeq[5][1] = -cos(state_pre[6]) * ly2;
 
-    Aeq[1][2] = 1.0;
+      Aeq[1][2] = 1.0;
 
-    Aeq[2][3] = -1.0;
-    Aeq[4][3] = lx4;
+      Aeq[2][3] = -1.0;
+      Aeq[4][3] = lx4;
 
-    Aeq[2][4] = -1.0;
-    Aeq[4][4] = lx5;
+      Aeq[2][4] = -1.0;
+      Aeq[4][4] = lx5;
 
-    Aeq[0][5] = -sin(state_pre[5]) * state_pre[0];
-    Aeq[2][5] = -cos(state_pre[5]) * state_pre[0];
-    Aeq[3][5] = -cos(state_pre[5]) * state_pre[0] * ly1;
-    Aeq[4][5] = cos(state_pre[5]) * state_pre[0] * lx1 ;
-    Aeq[5][5] = sin(state_pre[5]) * state_pre[0] * ly1;
+      Aeq[0][5] = -sin(state_pre[5]) * state_pre[0];
+      Aeq[2][5] = cos(state_pre[5]) * state_pre[0];
+//      std::cout << "Aeq[2][5] = \n" << Aeq[2][5] << "\ncos(state_pre[5]) = \n" << cos(state_pre[5]) << "\nstate_pre[0] is \n"
+//                << state_pre[0] << "\nstate_pre[1] = \n" << state_pre[1] << std::endl;
+      Aeq[3][5] = cos(state_pre[5]) * state_pre[0] * ly1;
+      Aeq[4][5] = -cos(state_pre[5]) * state_pre[0] * lx1 ;
+      Aeq[5][5] = sin(state_pre[5]) * state_pre[0] * ly1;
 
-    Aeq[0][6] = -sin(state_pre[6]) * state_pre[1];
-    Aeq[2][6] = -cos(state_pre[6]) * state_pre[1];
-    Aeq[3][6] = cos(state_pre[6]) * state_pre[1] * ly2;
-    Aeq[4][6] = cos(state_pre[6]) * state_pre[1] * lx2;
-    Aeq[5][6] = sin(state_pre[6]) * state_pre[1] * ly2;
+      Aeq[0][6] = -sin(state_pre[6]) * state_pre[1];
+      Aeq[2][6] = cos(state_pre[6]) * state_pre[1];
+      Aeq[3][6] = cos(state_pre[6]) * state_pre[1] * ly2;
+      Aeq[4][6] = -cos(state_pre[6]) * state_pre[1] * lx2;
+      Aeq[5][6] = sin(state_pre[6]) * state_pre[1] * ly2;
 
 
 
@@ -575,15 +576,15 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 
 
     Aeq[0][0] = cos(state_pre[5]);
-    Aeq[2][0] = -sin(state_pre[5]);
-    Aeq[3][0] = -sin(state_pre[5]) * ly1;
-    Aeq[4][0] = sin(state_pre[5]) * lx1;
+    Aeq[2][0] = sin(state_pre[5]);
+    Aeq[3][0] = sin(state_pre[5]) * ly1;
+    Aeq[4][0] = -sin(state_pre[5]) * lx1;
     Aeq[5][0] = -cos(state_pre[5]) * ly1;
 
     Aeq[0][1] = cos(state_pre[6]);
-    Aeq[2][1] = -sin(state_pre[6]);
-    Aeq[3][1] = -sin(state_pre[6]) * ly2;
-    Aeq[4][1] = sin(state_pre[6]) * lx2;
+    Aeq[2][1] = sin(state_pre[6]);
+    Aeq[3][1] = sin(state_pre[6]) * ly2;
+    Aeq[4][1] = -sin(state_pre[6]) * lx2;
     Aeq[5][1] = -cos(state_pre[6]) * ly2;
 
     Aeq[1][2] = 1.0;
@@ -595,15 +596,17 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     Aeq[4][4] = lx5;
 
     Aeq[0][5] = -sin(state_pre[5]) * state_pre[0];
-    Aeq[2][5] = -cos(state_pre[5]) * state_pre[0];
-    Aeq[3][5] = -cos(state_pre[5]) * state_pre[0] * ly1;
-    Aeq[4][5] = cos(state_pre[5]) * state_pre[0] * lx1 ;
+    Aeq[2][5] = cos(state_pre[5]) * state_pre[0];
+    std::cout << "Aeq[2][5] = \n" << Aeq[2][5] << "\ncos(state_pre[5]) = \n" << cos(state_pre[5]) << "\nstate_pre[0] is \n"
+                << state_pre[0] << "\nstate_pre[1] = \n" << state_pre[1] << std::endl;
+    Aeq[3][5] = cos(state_pre[5]) * state_pre[0] * ly1;
+    Aeq[4][5] = -cos(state_pre[5]) * state_pre[0] * lx1 ;
     Aeq[5][5] = sin(state_pre[5]) * state_pre[0] * ly1;
 
     Aeq[0][6] = -sin(state_pre[6]) * state_pre[1];
-    Aeq[2][6] = -cos(state_pre[6]) * state_pre[1];
+    Aeq[2][6] = cos(state_pre[6]) * state_pre[1];
     Aeq[3][6] = cos(state_pre[6]) * state_pre[1] * ly2;
-    Aeq[4][6] = cos(state_pre[6]) * state_pre[1] * lx2;
+    Aeq[4][6] = -cos(state_pre[6]) * state_pre[1] * lx2;
     Aeq[5][6] = sin(state_pre[6]) * state_pre[1] * ly2;
 
     for(int i = 0; i < 6 ; i++)
@@ -634,30 +637,35 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 //    std::cout << " 5 " << std::endl;
     //the desired trajectory
     wd(0) = 5.0 / 180.0 * 3.14;
+    wd(1) = 5.0 / 180.0 * 3.14;
     rd = wd * ros::Time::now().toSec();
 
 //    std::cout << "rd is \n" << rd << std::endl;
 
     //from euler angles to rotation matrix - desired
-    Eigen::AngleAxisd rollAngle(rd(0), Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd yawAngle(rd(2), Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd pitchAngle(rd(1), Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd rollAngle(rd(0), Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd yawAngle(rd(1), Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd pitchAngle(rd(2), Eigen::Vector3d::UnitZ());
     Eigen::Quaternion<double> q = rollAngle * yawAngle * pitchAngle;
     Eigen::Matrix3d Rd = q.matrix();
     //dRd
-    Eigen::AngleAxisd vrollAngle(wd(0), Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd vyawAngle(wd(2), Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd vpitchAngle(wd(1), Eigen::Vector3d::UnitX());
-    Eigen::Quaternion<double> qv = vrollAngle * vyawAngle * vpitchAngle;
+    Eigen::AngleAxisd vrollAngle(wd(0), Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd vpitchAngle(wd(1), Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd vyawAngle(wd(2), Eigen::Vector3d::UnitZ());
+    Eigen::Quaternion<double> qv = vrollAngle * vpitchAngle * vyawAngle;
     Eigen::Matrix3d dRd = qv.matrix();
+//    std::cout << "wd is \n" << wd << std::endl;
 
     //Lee - Rwd
-    Eigen::Matrix3d Rwd = Rd.transpose() * dRd;
+//    Eigen::Matrix3d Rwd = Rd.transpose() * dRd;
+    Eigen::Matrix3d Rwd = dRd;
     Sophus::SO3 SO3Rwd(Rwd);
     Eigen::Vector3d wd_so3 = SO3Rwd.log();
+//    std::cout << "wd_so3 is \n" << wd_so3 << std::endl;
 
     //Lee - eR
     Eigen::Matrix3d Rer = curR.transpose() * Rd;
+//    Eigen::Matrix3d Rer = 1/2 * (curR.transpose() * Rd - Rd.transpose() * curR);
 //    std::cout << "Rer is \n" << Rer << std::endl;
     Sophus::SO3 SO3Rer(Rer);
     Eigen::Vector3d er_so3 = SO3Rer.log();
@@ -670,22 +678,23 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
         state(i) = state_pre[i];
     //    std::cout << " 6 " << std::endl;
     acc_2nd = tor2acc * map2tor_2nd * state + extra_f;
-    std::cout << "acc_2nd is \n" << acc_2nd << std::endl;
-    std::cout << "state is \n" << state << std::endl;
-    std::cout << "extra_f is \n" << extra_f << std::endl;
+//    std::cout << "acc_2nd is \n" << acc_2nd << std::endl;
+//    std::cout << "state is \n" << state << std::endl;
+//    std::cout << "extra_f is \n" << extra_f << std::endl;
     for(int i =0; i < acc_2nd.size() - 3; i++)
     {
         ddp(i) = acc_2nd(i);
         dw(i) = acc_2nd(i+3);
     }
     //calculate the w
-    Eigen::AngleAxisd v0rollAngle(w(0), Eigen::Vector3d::UnitZ());
-    Eigen::AngleAxisd v0yawAngle(w(2), Eigen::Vector3d::UnitY());
-    Eigen::AngleAxisd v0pitchAngle(w(1), Eigen::Vector3d::UnitX());
-    Eigen::Quaternion<double> qv0 = v0rollAngle * v0yawAngle * v0pitchAngle;
+    Eigen::AngleAxisd v0rollAngle(w(0), Eigen::Vector3d::UnitX());
+    Eigen::AngleAxisd v0pitchAngle(w(1), Eigen::Vector3d::UnitY());
+    Eigen::AngleAxisd v0yawAngle(w(2), Eigen::Vector3d::UnitZ());
+    Eigen::Quaternion<double> qv0 = v0rollAngle * v0pitchAngle * v0yawAngle;
     Eigen::Matrix3d dR = qv0.matrix();
 
-    Eigen::Matrix3d Rdr = curR.transpose() * dR;
+//    Eigen::Matrix3d Rdr = curR.transpose() * dR;
+    Eigen::Matrix3d Rdr = dR;
     Sophus::SO3 SO3Rdr(Rdr);
     Eigen::Vector3d wBso3 = SO3Rdr.log();
 
@@ -707,16 +716,22 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd_so3 - wBso3) + kw3 * er_so3;
     pose_3rd << dddp, ddw;
 
+    std::cout << "Aeq is \n" << Aeq << std::endl;
     vpMatrix Aeq_inv = Aeq.pseudoInverse();
+    std::cout << " after pseudoInverse function" << std::endl;
     Eigen::Matrix<double, 7, 6> map2tor_3rd_inv;
     for(int i = 0; i < Aeq_inv.getRows(); i++)
         for(int j =0; j < Aeq_inv.getCols(); j++)
             map2tor_3rd_inv(i,j) = Aeq.pseudoInverse()[i][j];
-//    std::cout << "the map2tor_3rd_inv is \n" << map2tor_3rd_inv << std::endl;
-//    std::cout << "the tor2acc.inverse() is \n" << tor2acc.inverse() << std::endl;
-//    std::cout << "pose_3rd is \n" << pose_3rd << std::endl;
+    std::cout << "the map2tor_3rd_inv is \n" << map2tor_3rd_inv << std::endl;
+    std::cout << "the tor2acc.inverse() is \n" << tor2acc.inverse() << std::endl;
+    std::cout << "pose_3rd is \n" << pose_3rd << std::endl;
     f_angle_3rd = map2tor_3rd_inv * tor2acc.inverse() * pose_3rd;
-//    std::cout << "the results are \n" << f_angle_3rd << std::endl;
+    std::cout << "the results are \n" << f_angle_3rd << std::endl;
+
+
+
+
 
 
 // publish to joint setpoint and body setpoint both are in velocity

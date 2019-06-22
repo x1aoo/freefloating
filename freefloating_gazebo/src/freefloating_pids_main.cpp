@@ -215,8 +215,8 @@ int main(int argc, char ** argv)
         // body_command_publisher.publish(allocator.wrench2Thrusters(body_pid->WrenchCommand(), angle1, angle2, fl, fr, f2, f3, f4, nh));
         // if((int)(ros::Time::now().toSec())%2==0)
         
-//        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
-        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, gains, curR));
+        body_command_publisher.publish(allocator.wrench2Thrusters_iterative(body_pid->WrenchCommand(), state_pre, nh));
+//        body_command_publisher.publish(allocator.wrench2Thrusters_3rd(body_pid->WrenchCommand(), state_pre, state_posi, state_vel, nh, gains, curR));
 
         // to test the body_pid output
         // body_pid_publisher.publish(body_pid->WrenchCommand());

@@ -310,12 +310,11 @@ void FreeFloatingBodyPids::BodyStateCallBack(const nav_msgs::OdometryConstPtr &_
   Eigen::Vector3f rpy = q.toRotationMatrix().eulerAngles(0, 1, 2);
   roll.push_back(_msg->twist.twist.angular.x);
   cur_roll = rpy[0];
-  if (cur_roll >= 3.0)
-    cur_roll = cur_roll - 3.14159;
+//  if (cur_roll >= 3.0)
+//    cur_roll = cur_roll - 3.14159;
 //  std::cout << "current roll is : " << cur_roll << std:: endl;
   // pitch.push_back(_msg->twist.twist.angular.y);
   // yaw.push_back(_msg->twist.twist.angular.z);
-
   time_state.push_back(ros::Time::now().toSec());
 
 
@@ -331,8 +330,12 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   double vy = 0;
   double vz = 0.1 * (z - cur_depth);
   double vx = 0.0;
-  double desird_roll = 0.5;
-  double v_roll = 0.1;
+  if(ros::Time::now().toSec() >= 20.0)
+      vx = 0.5;
+  //test other motion effects
+  vx = vz = 0;
+//  double desird_roll = 0.5;
+  double v_roll = 0.05;
   double v_pitch = 0.0;
   double v_yaw = 0.0;
 
@@ -345,7 +348,7 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   s_v_x.push_back(vx);
   // s_v_y.push_back(y);
   // s_v_z.push_back(-0.02);
-  s_roll.push_back(-0.8);
+  s_roll.push_back(v_roll);
   // s_pitch.push_back(v_pitch);
   // s_yaw.push_back(0);
 
@@ -353,7 +356,7 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   // to output the time
 //  std::cout << ros::Time::now().toSec() << std::endl;
 
-  if(ros::Time::now().toSec()>= 30&& ros::Time::now().toSec()<=30.2)
+  if(ros::Time::now().toSec()>= 50&& ros::Time::now().toSec()<=50.2)
   {
     //to plot the x and roll velocity
   plt::figure();

@@ -287,7 +287,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   tau[4] = cmd.torque.y;
   tau[5] = cmd.torque.z;
   int iter = 0;
-  double eps = 0.01;
+  double eps = 1.0;
 //
   std::vector<double> vec_delta_state_fl, vec_state_fl;
   std::vector<double> vec_iter;
@@ -346,8 +346,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
       Aeq[0][5] = -sin(state_pre[5]) * state_pre[0];
       Aeq[2][5] = cos(state_pre[5]) * state_pre[0];
-//      std::cout << "Aeq[2][5] = \n" << Aeq[2][5] << "\ncos(state_pre[5]) = \n" << cos(state_pre[5]) << "\nstate_pre[0] is \n"
-//                << state_pre[0] << "\nstate_pre[1] = \n" << state_pre[1] << std::endl;
+
       Aeq[3][5] = cos(state_pre[5]) * state_pre[0] * ly1;
       Aeq[4][5] = -cos(state_pre[5]) * state_pre[0] * lx1 ;
       Aeq[5][5] = sin(state_pre[5]) * state_pre[0] * ly1;
@@ -411,8 +410,10 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     state = delta_state + state_pre;
     state_pre = state;
 
-    if(cost_delta <= eps)
+    if(fabs(cost_delta) <= eps){
       in_loop = false;
+    std::cout << "cost_delta = " << cost_delta << std::endl;
+    }
 
   }
 
@@ -431,7 +432,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     plot_cost_sum.push_back(cost_sum);
     plot_cost_rate.push_back((cost[3]*cost[3])/cost_sum);
 
-    if(ros::Time::now().toSec()>= 32&& ros::Time::now().toSec()<=34.2)
+    if(ros::Time::now().toSec()>= 52.0&& ros::Time::now().toSec()<=54.2)
     {
     plt::figure();
     plt::named_plot("tau in x",plot_time,plot_cost_x);
@@ -637,7 +638,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
 //    std::cout << " 5 " << std::endl;
     //the desired trajectory
     wd(0) = 5.0 / 180.0 * 3.14;
-    wd(1) = 5.0 / 180.0 * 3.14;
+//    wd(1) = 5.0 / 180.0 * 3.14;
     rd = wd * ros::Time::now().toSec();
 
 //    std::cout << "rd is \n" << rd << std::endl;
@@ -716,18 +717,18 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_3rd(const geometry_m
     ddw = ddwd + kw1 * (dwd - dw) + kw2 * (wd_so3 - wBso3) + kw3 * er_so3;
     pose_3rd << dddp, ddw;
 
-    std::cout << "Aeq is \n" << Aeq << std::endl;
+//    std::cout << "Aeq is \n" << Aeq << std::endl;
     vpMatrix Aeq_inv = Aeq.pseudoInverse();
-    std::cout << " after pseudoInverse function" << std::endl;
+//    std::cout << " after pseudoInverse function" << std::endl;
     Eigen::Matrix<double, 7, 6> map2tor_3rd_inv;
     for(int i = 0; i < Aeq_inv.getRows(); i++)
         for(int j =0; j < Aeq_inv.getCols(); j++)
             map2tor_3rd_inv(i,j) = Aeq.pseudoInverse()[i][j];
-    std::cout << "the map2tor_3rd_inv is \n" << map2tor_3rd_inv << std::endl;
-    std::cout << "the tor2acc.inverse() is \n" << tor2acc.inverse() << std::endl;
-    std::cout << "pose_3rd is \n" << pose_3rd << std::endl;
+//    std::cout << "the map2tor_3rd_inv is \n" << map2tor_3rd_inv << std::endl;
+//    std::cout << "the tor2acc.inverse() is \n" << tor2acc.inverse() << std::endl;
+//    std::cout << "pose_3rd is \n" << pose_3rd << std::endl;
     f_angle_3rd = map2tor_3rd_inv * tor2acc.inverse() * pose_3rd;
-    std::cout << "the results are \n" << f_angle_3rd << std::endl;
+//    std::cout << "the results are \n" << f_angle_3rd << std::endl;
 
 
 

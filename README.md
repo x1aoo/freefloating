@@ -172,6 +172,11 @@ So I will first check：
         + [] The problem is when I tuning the gains, it crashed
     + [] Check the function again 
         + [x] find errors in J(a) matrix
-        + [] Check the desired trajectory in body_pid
+        + [] Check the desired trajectory in body_pide
+            + [] The QP method has something wrong that are:
+                + [] The roll motion have cost but can not have the motion
+                + [] Test with other motion are equal 0
+                + [x] Check the iterative process
+                    + [] find the error in iterative sentence but do not know how to deal with the problem with iter = 1000
         + [] Still need to check other function - Sunday
     

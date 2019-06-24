@@ -333,9 +333,13 @@ void FreeFloatingBodyPids::VelocitySPCallBack(const geometry_msgs::TwistStampedC
   if(ros::Time::now().toSec() >= 20.0)
       vx = 0.5;
   //test other motion effects
-  vx = vz = 0;
-//  double desird_roll = 0.5;
-  double v_roll = 0.05;
+//  vx = vz = 0;
+  double desird_roll = 0.5;
+  if(ros::Time::now().toSec() >= 20.0)
+      desird_roll = -0.5;
+  double v_roll = 0.1 * (desird_roll - cur_roll);
+//  if(ros::Time::now().toSec() >= 20.0)
+//      v_roll = 0.01;
   double v_pitch = 0.0;
   double v_yaw = 0.0;
 

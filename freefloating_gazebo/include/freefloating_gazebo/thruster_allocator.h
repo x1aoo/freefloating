@@ -12,6 +12,7 @@
 
 std::vector<double> plot_cost_x, plot_cost_y, plot_cost_z, plot_cost_roll, plot_cost_pitch, plot_cost_yaw, plot_cost_sum, plot_cost_roll_square, plot_cost_rate;
 std::vector<double> plot_time;
+sensor_msgs::JointState msg_pre;
 
 namespace ffg
 {
@@ -56,6 +57,8 @@ public:
 
   Eigen::MatrixXd map;
   Eigen::MatrixXd inverse_map;
+
+
 
 
 

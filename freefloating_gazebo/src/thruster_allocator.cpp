@@ -292,7 +292,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   std::vector<double> vec_delta_state_fl, vec_state_fl;
   std::vector<double> vec_iter;
   bool in_loop = true;
-  while(iter<=1000 && in_loop)
+  while(iter<=200 && in_loop)
   {
   //   // vpMatrix Aeq_pre(6,7), Aeq(6,7);
     // vpColVector b(14), beq(6), delta_state(7);
@@ -303,7 +303,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 //    check the loop
     vec_delta_state_fl.push_back(cost_delta);
     vec_state_fl.push_back(state[0]);
-    if(iter == 1000)
+    if(iter == 200)
     {
       std::cout << "iter is " << iter << "\n" << "the maximum value is \n"
       << delta_state.getMaxValue() << "\n" << delta_state.getMinValue() << std::endl;
@@ -316,6 +316,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
       plt::figure();
       plt::named_plot("state",vec_iter,vec_delta_state_fl);
+      plt::ylim(-35, 35);
       plt::legend();
       plt::title("delta state in iter 1000");
       plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_state_changed_1000.png");
@@ -501,7 +502,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
   // update angle
     sensor_msgs::JointState joint_msg;
-
+    sensor_msgs::JointState msg;
 
     joint_msg.name.push_back("fwd_left");
     joint_msg.name.push_back("fwd_right");
@@ -509,23 +510,25 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
     joint_msg.position.push_back(state[6]);
 //    std::cout << "joint msg position[0] is " << joint_msg.position[0] << "\n"
 //    << "state[5] is " << state[5] << std::endl;
-
-    ros::Publisher Joint_Command_Publisher;
-    Joint_Command_Publisher = nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
-    Joint_Command_Publisher.publish(joint_msg);
-
-
+    if(iter < 200 )
+    {
+        ros::Publisher Joint_Command_Publisher;
+        Joint_Command_Publisher = nh.advertise<sensor_msgs::JointState>("/vectored_auv/joint_setpoint", 1);
+        Joint_Command_Publisher.publish(joint_msg);
 //    std::vector<sensor_msgs::JointState> msg;
-    sensor_msgs::JointState msg;
-
 //  sensor_msgs::JointState msg;
-  msg.name = names;
-  msg.effort.reserve(names.size());
-//
-  for(int i = 0; i < state.size()-2; i++)
-    msg.effort.push_back(state[i]);
+        msg.name = names;
+        msg.effort.reserve(names.size());
+        for (int i = 0; i < state.size() - 2; i++)
+            msg.effort.push_back(state[i]);
+        msg_pre = msg;
+//        msg_pre.name = msg.name;
+//        msg_pre.effort = msg.effort;
+        return msg;
+    }
+    return msg_pre;
 
-  return msg;
+
 }
 
 

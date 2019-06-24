@@ -184,3 +184,10 @@ So I will first check：
             + [x] Output the cost in 200 iterations
             + [] But why the cost could change ups and downs
             ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/delta_cost_200.png)
+            + [] And why the cost could be negative
+                + [] The detail between last two iterations
+                ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/delta_angles_200.png)
+                ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/delta_force_200.png)
+                + The picture shows that sometimes the state will have the small oscillations in both angles and in force
+                    + [] Check the QP
+                

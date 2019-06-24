@@ -289,7 +289,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
   int iter = 0;
   double eps = 1.0;
 //
-  std::vector<double> vec_delta_state_fl, vec_state_fl;
+  std::vector<double> vec_delta_state_fl, vec_state_fl, vec_state_fr, vec_state_f2, vec_state_f3, vec_state_f4, vec_state_angle1, vec_state_angle2;
   std::vector<double> vec_iter;
   std::vector<double> vec_cost_delta;
   bool in_loop = true;
@@ -304,6 +304,12 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 //    check the loop
     vec_delta_state_fl.push_back(cost_delta);
     vec_state_fl.push_back(state[0]);
+    vec_state_fr.push_back(state[1]);
+    vec_state_f2.push_back(state[2]);
+    vec_state_f3.push_back(state[3]);
+    vec_state_f4.push_back(state[4]);
+    vec_state_angle1.push_back(state[5]);
+    vec_state_angle2.push_back(state[6]);
     vec_cost_delta.push_back(cost_delta);
     if(iter == 200)
     {
@@ -316,16 +322,58 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
       plt::named_plot("cost",vec_iter,vec_cost_delta);
       plt::ylim(-30, 30);
       plt::legend();
-      plt::title("delta cost in iter 1000");
-      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_cost_200.png");
+      plt::title("delta cost in iter 200");
+      plt::save("/home/x1ao/master/master_thesis_auv/test01/iter200/delta_cost_200.png");
 
+
+      plt::figure();
+      plt::named_plot("fl",vec_iter,vec_state_fl);
+      plt::ylim(-35, 35);
+      plt::legend();
+//      plt::title("delta fl in iter 200");
+//      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_fl.png");
 
 //      plt::figure();
-//      plt::named_plot("fl",vec_iter,vec_delta_state_fl);
-//      plt::ylim(-35, 35);
-//      plt::legend();
-//      plt::title("delta fl in iter 1000");
-//      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_state_changed_200.png");
+      plt::named_plot("fr",vec_iter,vec_state_fr);
+      plt::ylim(-35, 35);
+      plt::legend();
+//      plt::title("delta fr in iter 200");
+//      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_fr.png");
+
+//        plt::figure();
+        plt::named_plot("f2",vec_iter,vec_state_f2);
+        plt::ylim(-35, 35);
+        plt::legend();
+//        plt::title("delta f2 in iter 200");
+//        plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_f2.png");
+
+//        plt::figure();
+        plt::named_plot("f3",vec_iter,vec_state_f3);
+        plt::ylim(-35, 35);
+        plt::legend();
+//        plt::title("delta f3 in iter 200");
+//        plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_f3.png");
+
+//        plt::figure();
+        plt::named_plot("f4",vec_iter,vec_state_f4);
+        plt::ylim(-35, 35);
+        plt::legend();
+        plt::title("delta force in iter 200");
+        plt::save("/home/x1ao/master/master_thesis_auv/test01/iter200/delta_force_200.png");
+
+        plt::figure();
+        plt::named_plot("angle1",vec_iter,vec_state_angle1);
+//        plt::ylim(-35, 35);
+        plt::legend();
+        plt::title("delta angle1 in iter 200");
+//        plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_angle1.png");
+
+//        plt::figure();
+        plt::named_plot("angle2",vec_iter,vec_state_angle1);
+//        plt::ylim(-35, 35);
+        plt::legend();
+        plt::title("delta angle2 in iter 200");
+        plt::save("/home/x1ao/master/master_thesis_auv/test01/iter200/delta_angles_200.png");
 
     }
 
@@ -411,7 +459,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
 //    std::cout << "delta angles are\n" << delta_state[5] <<"\n" << delta_state[6] << std::endl;
     cost = Aeq * delta_state - beq;
-    cost_delta = cost.transpose() * cost - cost_pre.transpose() * cost_pre;
+    cost_delta = cost_pre.transpose() * cost_pre - cost.transpose() * cost ;
     cost_pre = cost;
 
     state = delta_state + state_pre;

@@ -291,6 +291,7 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 //
   std::vector<double> vec_delta_state_fl, vec_state_fl;
   std::vector<double> vec_iter;
+  std::vector<double> vec_cost_delta;
   bool in_loop = true;
   while(iter<=200 && in_loop)
   {
@@ -303,23 +304,28 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 //    check the loop
     vec_delta_state_fl.push_back(cost_delta);
     vec_state_fl.push_back(state[0]);
+    vec_cost_delta.push_back(cost_delta);
     if(iter == 200)
     {
       std::cout << "iter is " << iter << "\n" << "the maximum value is \n"
       << delta_state.getMaxValue() << "\n" << delta_state.getMinValue() << std::endl;
 
-      // plt::figure();
-      // plt::named_plot("state",vec_iter,vec_state_fl);
-      // plt::legend();
-      // plt::title("state in iter 1000");
-      // plt::save("/home/x1ao/master/master_thesis_auv/test01/state_changed_1000.png");
 
+//      std::cout << "iter size is : " << vec_iter.size() << "\ndelta_cost size is : " <<  vec_cost_delta.size() << std::endl;
       plt::figure();
-      plt::named_plot("state",vec_iter,vec_delta_state_fl);
-      plt::ylim(-35, 35);
+      plt::named_plot("cost",vec_iter,vec_cost_delta);
+      plt::ylim(-30, 30);
       plt::legend();
-      plt::title("delta state in iter 1000");
-      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_state_changed_1000.png");
+      plt::title("delta cost in iter 1000");
+      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_cost_200.png");
+
+
+//      plt::figure();
+//      plt::named_plot("fl",vec_iter,vec_delta_state_fl);
+//      plt::ylim(-35, 35);
+//      plt::legend();
+//      plt::title("delta fl in iter 1000");
+//      plt::save("/home/x1ao/master/master_thesis_auv/test01/delta_state_changed_200.png");
 
     }
 
@@ -410,6 +416,8 @@ sensor_msgs::JointState ThrusterAllocator::wrench2Thrusters_iterative(const geom
 
     state = delta_state + state_pre;
     state_pre = state;
+
+
 
     if(fabs(cost_delta) <= eps){
       in_loop = false;

@@ -181,3 +181,6 @@ So I will first check：
         + [] Meet problem in high iteration but still have big difference in cost
             + [] The differences are equal but opposite
             ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/delta_state_changed_1000.png)
+            + [x] Output the cost in 200 iterations
+            + [] But why the cost could change ups and downs
+            ![Image text](https://github.com/x1aoo/freefloating/raw/master/image/delta_cost_200.png)
